@@ -61,7 +61,8 @@ public class User extends BasicEntity implements UserDetails {
                 String phoneNumber,
                 String accessToken,
                 String refreshToken,
-                String idToken) {
+                String idToken,
+                Role role) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthDate = birthDate;
@@ -71,14 +72,18 @@ public class User extends BasicEntity implements UserDetails {
         this.refreshToken = refreshToken;
         this.idToken = idToken;
         this.status = Status.ACTIVE;
+        this.role = role;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(role.getName()));
+        if (this.role != null) {
+            authorities.add(new SimpleGrantedAuthority(this.role.getName()));
+        }
         return authorities;
     }
+
 
     @Override
     public String getPassword() {
