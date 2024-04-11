@@ -14,7 +14,7 @@ import lombok.experimental.FieldDefaults;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "employes")
+@Table(name = "employees")
 @Getter
 @Setter
 @NoArgsConstructor
