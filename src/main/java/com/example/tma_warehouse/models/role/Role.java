@@ -1,4 +1,4 @@
-package com.example.tma_warehouse.models.user.role;
+package com.example.tma_warehouse.models.role;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
