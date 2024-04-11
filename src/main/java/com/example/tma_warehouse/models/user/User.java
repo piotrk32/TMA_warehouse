@@ -5,6 +5,7 @@ import com.example.tma_warehouse.models.basic.BasicEntity;
 import com.example.tma_warehouse.models.coordinator.Coordinator;
 import com.example.tma_warehouse.models.employee.Employee;
 import com.example.tma_warehouse.models.user.enums.Status;
+import com.example.tma_warehouse.models.user.role.Role;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -16,9 +17,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -41,6 +40,16 @@ public class User extends BasicEntity implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     Status status;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
+
+
 
     public User(String email,
                 String accessToken,
@@ -75,18 +84,9 @@ public class User extends BasicEntity implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
-
-        if (this instanceof Employee) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_EMPLOYEE"));
-        } else if (this instanceof Coordinator) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_COORDINATOR"));
-        } else if (this instanceof Administrator){
-            authorities.add(new SimpleGrantedAuthority("ROLE_ADMINISTRATOR"));
+        for (Role role : this.roles) {
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
         }
-        if (this.status.equals(Status.REGISTRATION_INCOMPLETE)) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_INCOMPLETE_REGISTRATION"));
-        }
-
         return authorities;
     }
 
