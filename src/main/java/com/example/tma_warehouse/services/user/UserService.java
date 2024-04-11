@@ -1,4 +1,4 @@
-package com.example.tma_warehouse.services;
+package com.example.tma_warehouse.services.user;
 
 import com.example.tma_warehouse.exceptions.EntityNotFoundException;
 import com.example.tma_warehouse.models.role.Role;
