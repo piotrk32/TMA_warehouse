@@ -72,4 +72,8 @@ public class UserService {
         user.setIdToken(null);
         userRepository.saveAndFlush(user);
     }
+
+    public void deleteUserById(Long userId) {
+        userRepository.deleteById(userId);
+    }
 }
