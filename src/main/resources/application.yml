@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/TMA_warehouse
+    url: jdbc:postgresql://localhost:5432/tma_warehouse
     username: postgres
     password: 12345
     driver-class-name: org.postgresql.Driver
