@@ -2,9 +2,22 @@ package com.example.tma_warehouse.models.coordinator;
 
 import com.example.tma_warehouse.models.role.Role;
 import com.example.tma_warehouse.models.user.User;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 
+@Entity
+@Table(name = "coordinatores")
+@Getter
+@Setter
+@NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Coordinator extends User {
 
     public Coordinator(String firstName,
