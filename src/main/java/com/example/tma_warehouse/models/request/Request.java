@@ -23,24 +23,19 @@ public class Request extends BasicEntity {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumns({
-            @JoinColumn(name = "employee_first_name", referencedColumnName = "firstName"),
-            @JoinColumn(name = "employee_last_name", referencedColumnName = "lastName")
-    })
+    @JoinColumn(name = "employee_id", referencedColumnName = "id")
     private Employee employee;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", referencedColumnName = "id")
-    Item item;
+    private Item item;
 
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "request_row_id_generator")
-    @SequenceGenerator(name = "request_row_id_generator", sequenceName = "request_row_id_seq", allocationSize = 1)
     @Column(name = "request_row_id", updatable = false, nullable = false)
     private Long requestRowId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "unit_of_measurement")
-    private UnitOfMeasurement unitOfMeasurement; // Założenie, że UnitOfMeasurement to Enum
+    private UnitOfMeasurement unitOfMeasurement; // Zakładając, że UnitOfMeasurement to Enum
 
     @Column(name = "quantity")
     private BigDecimal quantity;
