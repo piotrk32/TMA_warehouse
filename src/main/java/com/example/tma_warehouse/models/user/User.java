@@ -1,11 +1,8 @@
 package com.example.tma_warehouse.models.user;
 
-import com.example.tma_warehouse.models.administrator.Administrator;
 import com.example.tma_warehouse.models.basic.BasicEntity;
-import com.example.tma_warehouse.models.coordinator.Coordinator;
-import com.example.tma_warehouse.models.employee.Employee;
 import com.example.tma_warehouse.models.user.enums.Status;
-import com.example.tma_warehouse.models.user.role.Role;
+import com.example.tma_warehouse.models.role.Role;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -41,14 +38,9 @@ public class User extends BasicEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     Status status;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private Set<Role> roles = new HashSet<>();
-
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id")
+    private Role role;
 
 
     public User(String email,
@@ -84,9 +76,7 @@ public class User extends BasicEntity implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        for (Role role : this.roles) {
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
-        }
+        authorities.add(new SimpleGrantedAuthority(role.getName()));
         return authorities;
     }
 
