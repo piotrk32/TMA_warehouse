@@ -28,8 +28,8 @@ public class ItemRequestDTO {
     private String direction = "ASC";
 
     @Schema(example = "Electronics")
-    @Length(min = 3, message = "Item category search must be at least 3 characters long.")
-    private String itemCategorySearch = null;
+    @Length(min = 3, message = "Item group search must be at least 3 characters long.")
+    private String itemGroupSearch = null;
 
     @Schema(example = "50")
     @Min(value = 0, message = "Minimum price must not be less than zero.")
