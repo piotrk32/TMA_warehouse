@@ -32,6 +32,23 @@ public class ItemSpecification {
             return criteriaBuilder.lessThanOrEqualTo(root.get("startingPrice"), priceTo);
         };
     }
+    public static Specification<Item> hasStatus(String status) {
+        return (root, query, criteriaBuilder) -> {
+            if (status == null || status.isBlank()) {
+                return criteriaBuilder.isTrue(criteriaBuilder.literal(true)); // Jeśli status jest pusty, nie filtrujemy po nim
+            }
+            return criteriaBuilder.equal(root.get("status"), status.trim());
+        };
+    }
+
+    public static Specification<Item> hasStorageLocation(String storageLocation) {
+        return (root, query, criteriaBuilder) -> {
+            if (storageLocation == null || storageLocation.isBlank()) {
+                return criteriaBuilder.isTrue(criteriaBuilder.literal(true)); // Jeśli lokalizacja magazynowa jest pusta, nie filtrujemy po niej
+            }
+            return criteriaBuilder.like(criteriaBuilder.lower(root.get("storageLocation")), "%" + storageLocation.toLowerCase().trim() + "%");
+        };
+    }
 
 
 }
