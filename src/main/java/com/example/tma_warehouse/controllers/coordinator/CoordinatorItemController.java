@@ -2,16 +2,20 @@ package com.example.tma_warehouse.controllers.coordinator;
 
 import com.example.tma_warehouse.exceptions.EntityNotFoundException;
 import com.example.tma_warehouse.models.item.dtos.ItemInputDTO;
+import com.example.tma_warehouse.models.item.dtos.ItemRequestDTO;
 import com.example.tma_warehouse.models.item.dtos.ItemResponseDTO;
 import com.example.tma_warehouse.services.item.ItemFacade;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.api.ErrorMessage;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -114,6 +118,32 @@ public class CoordinatorItemController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new com.example.tma_warehouse.exceptions.ErrorMessage("Internal Server Error", e.getMessage()));
         }
     }
+
+    @GetMapping("/all")
+    @Operation(summary = "Show all items", description = "Functionality lets user to show all available items")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successful offering acquisition",
+                    content = @Content(
+                            mediaType = "application/json",
+                            array = @ArraySchema(
+                                    schema = @Schema(implementation = ItemResponseDTO.class)
+                            )
+                    )),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Bad Request - temporally returns map of errors or ErrorMessage",
+                    content = @Content(
+                            mediaType = "application/json"
+                    ))
+    })
+    public ResponseEntity<Page<ItemResponseDTO>> getItems(
+            @ModelAttribute @Valid ItemRequestDTO itemRequestDTO) {
+        Page<ItemResponseDTO> itemResponseDTOPage = itemFacade.getItems(itemRequestDTO);
+        return new ResponseEntity<>(itemResponseDTOPage, HttpStatus.OK);
+    }
+
 
 
 
