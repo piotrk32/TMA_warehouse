@@ -11,6 +11,8 @@ import java.math.BigDecimal;
 public record ItemInputDTO(
 
         @NotBlank(message = "Item name field must be filled in.")
+        String itemName,
+        @NotBlank(message = "Item name field must be filled in.")
         String itemGroup,
         @NotBlank(message = "Unit of measurement  field must be filled in.")
         String unitOfMeasurement,

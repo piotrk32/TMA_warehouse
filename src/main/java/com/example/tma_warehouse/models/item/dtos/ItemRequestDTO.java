@@ -9,8 +9,8 @@ import org.hibernate.validator.constraints.Length;
 
 @Getter
 @Setter
-@Schema
 @NoArgsConstructor
+@Schema(description = "Data Transfer Object for item request")
 public class ItemRequestDTO {
 
     @Schema(example = "0")
@@ -24,8 +24,12 @@ public class ItemRequestDTO {
     @Schema(example = "itemGroup")
     private String sortParam = "itemGroup";
 
-    @Schema(example = "DESC")
+    @Schema(example = "ASC")
     private String direction = "ASC";
+
+    @Schema(example = "Car")
+    @Length(min = 3, message = "Item name search must be at least 3 characters long.")
+    private String itemNameSearch = null;
 
     @Schema(example = "Electronics")
     @Length(min = 3, message = "Item group search must be at least 3 characters long.")
@@ -39,8 +43,13 @@ public class ItemRequestDTO {
     @Min(value = 1, message = "Maximum price must be at least one.")
     private String priceTo = null;
 
+    @Schema(example = "Active")
+    @Length(min = 2, message = "Status search must be at least 2 characters long.")
+    private String status = null;
 
-
+    @Schema(example = "Main Warehouse")
+    @Length(min = 3, message = "Storage location search must be at least 3 characters long.")
+    private String storageLocation = null;
 
 
 }

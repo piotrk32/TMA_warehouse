@@ -20,6 +20,9 @@ import java.math.BigDecimal;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Item extends BasicEntity {
 
+    @Column(name = "item_name")
+    private String itemName;
+
 
     @Column(name = "item_group")
     @Enumerated(EnumType.STRING)
@@ -47,7 +50,8 @@ public class Item extends BasicEntity {
     @Column(name = "photo")
     private String photoPath; // może przechowywać ścieżkę do zdjęcia lub UR
 
-    public Item(ItemGroup itemGroup, UnitOfMeasurement unitOfMeasurement, BigDecimal quantity, BigDecimal priceWithoutVat, String status, String storageLocation, String contactPerson, String photoPath) {
+    public Item(String itemName, ItemGroup itemGroup, UnitOfMeasurement unitOfMeasurement, BigDecimal quantity, BigDecimal priceWithoutVat, String status, String storageLocation, String contactPerson, String photoPath) {
+        this.itemName = itemName;
         this.itemGroup = itemGroup;
         this.unitOfMeasurement = unitOfMeasurement;
         this.quantity = quantity;

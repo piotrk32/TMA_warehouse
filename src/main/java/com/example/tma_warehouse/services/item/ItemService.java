@@ -14,6 +14,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 @Service
 @RequiredArgsConstructor
 public class ItemService {
@@ -31,6 +33,7 @@ public class ItemService {
         UnitOfMeasurement unitOfMeasurement = UnitOfMeasurement.valueOf(itemInputDTO.unitOfMeasurement());
 
         Item item = new Item(
+                itemInputDTO.itemName(),
                 itemGroup,
                 unitOfMeasurement,
                 itemInputDTO.quantity(),
@@ -52,6 +55,7 @@ public class ItemService {
 
         Item item = getItemById(itemId);
 
+        item.setItemName(itemInputDTO.itemName());
         item.setItemGroup(ItemGroup.valueOf(itemInputDTO.itemGroup()));
         item.setUnitOfMeasurement(UnitOfMeasurement.valueOf(itemInputDTO.unitOfMeasurement()));
         item.setQuantity(itemInputDTO.quantity());
@@ -77,11 +81,24 @@ public class ItemService {
             spec = spec.and(ItemSpecification.itemCategoryContains(itemRequestDTO.getItemGroupSearch()));
         }
         if (itemRequestDTO.getPriceFrom() != null) {
-            spec = spec.and(ItemSpecification.priceGreaterThanOrEqual(Double.parseDouble(itemRequestDTO.getPriceFrom())));
+            BigDecimal priceFrom = new BigDecimal(itemRequestDTO.getPriceFrom());
+            spec = spec.and(ItemSpecification.priceGreaterThanOrEqual(priceFrom));
         }
         if (itemRequestDTO.getPriceTo() != null) {
-            spec = spec.and(ItemSpecification.priceLessThanOrEqual(Double.parseDouble(itemRequestDTO.getPriceTo())));
+            BigDecimal priceTo = new BigDecimal(itemRequestDTO.getPriceTo());
+            spec = spec.and(ItemSpecification.priceLessThanOrEqual(priceTo));
         }
+        if (itemRequestDTO.getStatus() != null) {
+            spec = spec.and(ItemSpecification.hasStatus(itemRequestDTO.getStatus()));
+        }
+        if (itemRequestDTO.getStorageLocation() != null) {
+            spec = spec.and(ItemSpecification.hasStorageLocation(itemRequestDTO.getStorageLocation()));
+        }
+
+        if (itemRequestDTO.getItemNameSearch() != null) { // Załóżmy, że dodałeś pole nameSearch do ItemRequestDTO
+            spec = spec.and(ItemSpecification.nameContains(itemRequestDTO.getItemNameSearch()));
+        }
+
 
         return itemRepository.findAll(spec, pageRequest);
     }

@@ -4,8 +4,7 @@ import lombok.Builder;
 
 import java.math.BigDecimal;
 
-public record ItemResponseDTO(
-
+public record ItemResponseDTO(String itemName,
     Long itemId,
     String itemGroup,
     String unitOfMeasurement,

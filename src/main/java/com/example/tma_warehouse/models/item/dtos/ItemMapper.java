@@ -8,6 +8,7 @@ public class ItemMapper {
 
         return ItemResponseDTO
                 .builder()
+                .itemName(item.getItemName())
                 .itemId(item.getId())
                 .itemGroup(String.valueOf(item.getItemGroup()))
                 .unitOfMeasurement(String.valueOf(item.getUnitOfMeasurement()))
