@@ -7,8 +7,6 @@ import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 public record RequestInputDTO(
-        @NotBlank(message = "Employee name must be filled in.")
-        String employeeName,
 
         @NotNull(message = "Item ID cannot be null.")
         Long itemId,
