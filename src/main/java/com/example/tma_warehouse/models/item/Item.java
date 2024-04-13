@@ -33,7 +33,7 @@ public class Item extends BasicEntity {
     private BigDecimal quantity;
 
     @Column(name = "price_without_vat")
-    private BigDecimal priceWithoutVAT;
+    private BigDecimal priceWithoutVat;
 
     @Column(name = "status")
     private String status;
@@ -46,6 +46,17 @@ public class Item extends BasicEntity {
 
     @Column(name = "photo")
     private String photoPath; // może przechowywać ścieżkę do zdjęcia lub UR
+
+    public Item(ItemGroup itemGroup, UnitOfMeasurement unitOfMeasurement, BigDecimal quantity, BigDecimal priceWithoutVat, String status, String storageLocation, String contactPerson, String photoPath) {
+        this.itemGroup = itemGroup;
+        this.unitOfMeasurement = unitOfMeasurement;
+        this.quantity = quantity;
+        this.priceWithoutVat = priceWithoutVat;
+        this.status = status;
+        this.storageLocation = storageLocation;
+        this.contactPerson = contactPerson;
+        this.photoPath = photoPath;
+    }
 
 
 }
