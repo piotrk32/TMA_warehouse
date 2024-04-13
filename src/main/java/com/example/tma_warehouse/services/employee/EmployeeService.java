@@ -11,6 +11,8 @@ import com.example.tma_warehouse.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class EmployeeService {
@@ -21,6 +23,10 @@ public class EmployeeService {
     public Employee getEmployeeById(Long employeeId) {
         return employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new EntityNotFoundException("Employee", "No employee found with id: " + employeeId));
+    }
+
+    public Optional<Employee> findEmployeeByEmail(String email) {
+        return Optional.ofNullable(employeeRepository.findByEmail(email));
     }
 
     public Employee createEmployee(EmployeeInputDTO employeeInputDTO, User user) {
@@ -52,6 +58,8 @@ public class EmployeeService {
 
         return employeeRepository.saveAndFlush(employee);
     }
+
+
 
 
 }
