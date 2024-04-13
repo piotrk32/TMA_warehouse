@@ -35,7 +35,7 @@ public class ItemService {
                 itemInputDTO.contactPerson(),
                 itemInputDTO.photoPath()
         );
-        return itemRepository.save(item);
+        return itemRepository.saveAndFlush(item);
     }
 
 
