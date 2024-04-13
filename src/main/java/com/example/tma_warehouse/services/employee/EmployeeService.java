@@ -1,11 +1,12 @@
 package com.example.tma_warehouse.services.employee;
 
+import com.example.tma_warehouse.exceptions.EntityNotFoundException;
+
 import com.example.tma_warehouse.models.employee.Employee;
 import com.example.tma_warehouse.models.employee.dtos.EmployeeInputDTO;
-import com.example.tma_warehouse.models.role.Role;
 import com.example.tma_warehouse.models.user.User;
+import com.example.tma_warehouse.models.user.enums.Status;
 import com.example.tma_warehouse.repositories.EmployeeRepository;
-import com.example.tma_warehouse.repositories.RoleRepository;
 import com.example.tma_warehouse.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,15 +15,15 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class EmployeeService {
 
-    private final UserRepository userRepository;
     private final EmployeeRepository employeeRepository;
-    private final RoleRepository roleRepository;
+    private final UserRepository userRepository;
+
+    public Employee getEmployeeById(Long employeeId) {
+        return employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new EntityNotFoundException("Employee", "No employee found with id: " + employeeId));
+    }
 
     public Employee createEmployee(EmployeeInputDTO employeeInputDTO, User user) {
-        // Znajdź rolę dla pracownika, załóżmy że wszyscy pracownicy mają tą samą rolę o nazwie "ROLE_EMPLOYEE"
-        Role employeeRole = roleRepository.findByName("ROLE_EMPLOYEE")
-                .orElseThrow(() -> new IllegalStateException("Employee role not found"));
-
         Employee employee = new Employee(
                 employeeInputDTO.getFirstName(),
                 employeeInputDTO.getLastName(),
@@ -31,10 +32,32 @@ public class EmployeeService {
                 employeeInputDTO.getPhoneNumber(),
                 user.getAccessToken(),
                 user.getRefreshToken(),
-                user.getIdToken(),
-                employeeRole); // Dodajemy rolę do konstruktora
-
+                user.getIdToken());
         userRepository.delete(user);
         return employeeRepository.saveAndFlush(employee);
     }
+
+    public void deleteEmployeeById(Long employeeId) {
+        Employee employee = getEmployeeById(employeeId);
+        employee.setStatus(Status.INACTIVE);
+        employeeRepository.saveAndFlush(employee);
+    }
+
+    public Employee updateEmployeeById(Long employeeId, EmployeeInputDTO employeeInputDTO) {
+        Employee employee = getEmployeeById(employeeId);
+        employee.setFirstName(employeeInputDTO.getFirstName());
+        employee.setLastName(employeeInputDTO.getLastName());
+        employee.setBirthDate(employeeInputDTO.getBirthDate());
+        employee.setPhoneNumber(employeeInputDTO.getPhoneNumber());
+
+        return employeeRepository.saveAndFlush(employee);
+    }
+
+
 }
+
+
+
+
+
+

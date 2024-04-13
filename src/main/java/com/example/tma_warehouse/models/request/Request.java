@@ -1,7 +1,6 @@
 package com.example.tma_warehouse.models.request;
 
 import com.example.tma_warehouse.models.basic.BasicEntity;
-import com.example.tma_warehouse.models.employee.Employee;
 import com.example.tma_warehouse.models.item.Item;
 import com.example.tma_warehouse.models.item.enums.UnitOfMeasurement;
 import jakarta.persistence.*;
@@ -22,9 +21,9 @@ import java.math.BigDecimal;
 public class Request extends BasicEntity {
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "employee_id", referencedColumnName = "id")
-    private Employee employee;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "employee_id", referencedColumnName = "id")
+//    private Employee employee;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", referencedColumnName = "id")

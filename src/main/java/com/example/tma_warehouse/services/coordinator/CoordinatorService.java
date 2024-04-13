@@ -1,12 +1,13 @@
 package com.example.tma_warehouse.services.coordinator;
 
+
+import com.example.tma_warehouse.exceptions.EntityNotFoundException;
+
 import com.example.tma_warehouse.models.coordinator.Coordinator;
 import com.example.tma_warehouse.models.coordinator.dtos.CoordinatorInputDTO;
-import com.example.tma_warehouse.models.employee.Employee;
-import com.example.tma_warehouse.models.role.Role;
 import com.example.tma_warehouse.models.user.User;
+import com.example.tma_warehouse.models.user.enums.Status;
 import com.example.tma_warehouse.repositories.CoordinatorRepository;
-import com.example.tma_warehouse.repositories.RoleRepository;
 import com.example.tma_warehouse.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,17 +16,15 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CoordinatorService {
 
-    private final UserRepository userRepository;
     private final CoordinatorRepository coordinatorRepository;
-    private final RoleRepository roleRepository;
+    private final UserRepository userRepository;
 
-
+    public Coordinator getCoordinatorById(Long coordinatorId) {
+        return coordinatorRepository.findById(coordinatorId)
+                .orElseThrow(() -> new EntityNotFoundException("Coordinator", "No coordinator found with id: " + coordinatorId));
+    }
 
     public Coordinator createCoordinator(CoordinatorInputDTO coordinatorInputDTO, User user) {
-        // Znajdź rolę dla pracownika, załóżmy że wszyscy pracownicy mają tą samą rolę o nazwie "ROLE_EMPLOYEE"
-        Role coordinatorRole = roleRepository.findByName("ROLE_EMPLOYEE")
-                .orElseThrow(() -> new IllegalStateException("Employee role not found"));
-
         Coordinator coordinator = new Coordinator(
                 coordinatorInputDTO.getFirstName(),
                 coordinatorInputDTO.getLastName(),
@@ -34,10 +33,24 @@ public class CoordinatorService {
                 coordinatorInputDTO.getPhoneNumber(),
                 user.getAccessToken(),
                 user.getRefreshToken(),
-                user.getIdToken(),
-                coordinatorRole); // Dodajemy rolę do konstruktora
-
+                user.getIdToken());
         userRepository.delete(user);
         return coordinatorRepository.saveAndFlush(coordinator);
     }
+
+    public void deleteCoordinatorById(Long coordinatorId) {
+        Coordinator coordinator = getCoordinatorById(coordinatorId);
+        coordinator.setStatus(Status.INACTIVE);
+        coordinatorRepository.saveAndFlush(coordinator);
+    }
+
+    public Coordinator updateCoordinatorById(Long coordinatorId, CoordinatorInputDTO coordinatorInputDTO) {
+        Coordinator coordinator = getCoordinatorById(coordinatorId);
+        coordinator.setFirstName(coordinatorInputDTO.getFirstName());
+        coordinator.setLastName(coordinatorInputDTO.getLastName());
+        coordinator.setBirthDate(coordinatorInputDTO.getBirthDate());
+        coordinator.setPhoneNumber(coordinatorInputDTO.getPhoneNumber());
+        return coordinatorRepository.saveAndFlush(coordinator);
+    }
+
 }

@@ -1,6 +1,6 @@
 package com.example.tma_warehouse.models.employee;
 
-import com.example.tma_warehouse.models.role.Role;
+
 import com.example.tma_warehouse.models.user.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -20,22 +20,16 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Employee extends User {
 
-
-
-    public Employee(String firstName,
+    public Employee(
+                    String firstName,
                     String lastName,
                     LocalDate birthDate,
                     String email,
                     String phoneNumber,
                     String accessToken,
                     String refreshToken,
-                    String idToken,
-                    Role role) {
-        super(firstName, lastName, birthDate, email, phoneNumber, accessToken, refreshToken, idToken, role);
-    }
-
-    public String getFullName() {
-        return getFirstName() + " " + getLastName();
+                    String idToken) {
+        super(firstName, lastName, birthDate, email, phoneNumber, accessToken, refreshToken, idToken);
     }
 
 }
