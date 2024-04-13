@@ -43,6 +43,22 @@ public class ItemService {
         itemRepository.delete(item);
     }
 
+    public Item updateItemById(Long itemId, ItemInputDTO itemInputDTO) {
+
+        Item item = getItemById(itemId);
+
+        item.setItemGroup(ItemGroup.valueOf(itemInputDTO.itemGroup()));
+        item.setUnitOfMeasurement(UnitOfMeasurement.valueOf(itemInputDTO.unitOfMeasurement()));
+        item.setQuantity(itemInputDTO.quantity());
+        item.setPriceWithoutVat(itemInputDTO.priceWithoutVat());
+        item.setStatus(itemInputDTO.status());
+        item.setStorageLocation(itemInputDTO.storageLocation());
+        item.setContactPerson(itemInputDTO.contactPerson());
+        item.setPhotoPath(itemInputDTO.photoPath());
+
+        return itemRepository.saveAndFlush(item);
+    }
+
 
 
 
