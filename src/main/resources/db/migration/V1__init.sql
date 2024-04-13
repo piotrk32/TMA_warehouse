@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS coordinators (
 -- Items table
 CREATE TABLE IF NOT EXISTS items (
                                      id BIGINT PRIMARY KEY DEFAULT nextval('id_seq'),
+                                     item_name VARCHAR(255),
                                      item_group VARCHAR(255) NOT NULL,
                                      unit_of_measurement VARCHAR(255) NOT NULL,
                                      quantity NUMERIC(10, 2) NOT NULL,
