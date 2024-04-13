@@ -27,3 +27,6 @@ public record RequestInputDTO(
         String comment
         // Status and Request Row ID are likely to be managed by the backend logic and not provided by the user.
 ) {
+    // The record implicitly includes all the fields in its constructor,
+    // and the corresponding getters are also generated automatically.
+}
