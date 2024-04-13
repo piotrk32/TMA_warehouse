@@ -23,7 +23,7 @@ public record ItemInputDTO(
         String storageLocation,
         @NotBlank(message = "Contact person field must be filled in.")
         String contactPerson,
-        String photo){
+        String photoPath){
 
 }
 
