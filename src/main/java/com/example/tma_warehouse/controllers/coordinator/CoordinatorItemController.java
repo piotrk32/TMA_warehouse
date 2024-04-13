@@ -1,5 +1,6 @@
 package com.example.tma_warehouse.controllers.coordinator;
 
+import com.example.tma_warehouse.exceptions.EntityNotFoundException;
 import com.example.tma_warehouse.models.item.dtos.ItemInputDTO;
 import com.example.tma_warehouse.models.item.dtos.ItemResponseDTO;
 import com.example.tma_warehouse.services.item.ItemFacade;
@@ -81,6 +82,41 @@ public class CoordinatorItemController {
         ItemResponseDTO updatedItem = itemFacade.updateItemById(itemId, itemInputDTO);
         return ResponseEntity.ok(updatedItem);
     }
+
+    @Operation(summary = "Delete existing item", description = "Deletes an item based on the provided ID")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Successful deletion of item"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Bad Request",
+                    content = @Content(mediaType = "application/json")
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Not Found - Item not found",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorMessage.class)
+                    )
+            )
+    })
+    @DeleteMapping("/delete/{itemId}")
+    public ResponseEntity<?> deleteItemById(@PathVariable Long itemId) {
+        try {
+            itemFacade.deleteItemById(itemId);
+            return ResponseEntity.noContent().build(); // 204 No Content status
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new com.example.tma_warehouse.exceptions.ErrorMessage("Item Not Found", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new com.example.tma_warehouse.exceptions.ErrorMessage("Internal Server Error", e.getMessage()));
+        }
+    }
+
+
+
 
 
 }
