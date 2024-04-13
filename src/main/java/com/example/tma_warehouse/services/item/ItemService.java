@@ -38,6 +38,13 @@ public class ItemService {
         return itemRepository.saveAndFlush(item);
     }
 
+    public void deleteItemById(Long itemId) {
+        Item item = getItemById(itemId);
+        itemRepository.delete(item);
+    }
+
+
+
 
 
 }
