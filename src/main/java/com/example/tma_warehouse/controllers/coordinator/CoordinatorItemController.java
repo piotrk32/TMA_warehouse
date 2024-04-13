@@ -13,10 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springdoc.api.ErrorMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/coordinator/items")
@@ -53,6 +50,36 @@ public class CoordinatorItemController {
     public ResponseEntity<ItemResponseDTO> createItem(@RequestBody ItemInputDTO itemInputDTO) {
         ItemResponseDTO itemResponseDTO = itemFacade.createItem(itemInputDTO);
         return new ResponseEntity<>(itemResponseDTO, HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "Update existing item", description = "Updates an item based on the provided ID and payload")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Successful update of item",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ItemResponseDTO.class)
+                    )),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Bad Request - returns map of errors",
+                    content = @Content(
+                            mediaType = "application/json"
+                    )),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Not Found - Item not found",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorMessage.class)
+                    ))
+    })
+    @PutMapping("/update/{itemId}")
+    public ResponseEntity<ItemResponseDTO> updateItemById(@PathVariable Long itemId,
+                                                          @RequestBody ItemInputDTO itemInputDTO) {
+        ItemResponseDTO updatedItem = itemFacade.updateItemById(itemId, itemInputDTO);
+        return ResponseEntity.ok(updatedItem);
     }
 
 
