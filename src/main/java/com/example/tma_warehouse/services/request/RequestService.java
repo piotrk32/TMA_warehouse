@@ -48,19 +48,20 @@ public class RequestService {
 
         Item item = itemService.getItemById(requestInputDTO.itemId());
 
-        // Check if the requested quantity is available
         BigDecimal availableQuantity = item.getQuantity();
         BigDecimal requestedQuantity = requestInputDTO.quantity();
         if (availableQuantity.compareTo(requestedQuantity) < 0) {
-            // Not enough quantity available, throw an exception with a detailed message
             throw new InsufficientQuantityException("Requested quantity for item ID " + requestInputDTO.itemId()
                     + " exceeds available stock. Available: " + availableQuantity
                     + ", Requested: " + requestedQuantity);
         }
 
+        // Calculate priceWithoutVat as item's price multiplied by the requested quantity
+        BigDecimal priceWithoutVat = item.getPriceWithoutVat().multiply(requestedQuantity);
+
         // Reduce the item's quantity by the requested quantity
         item.setQuantity(availableQuantity.subtract(requestedQuantity));
-        itemService.saveItem(item); // Assuming saveItem is correctly implemented in itemService
+        itemService.saveItem(item);
 
         // Fetch the next value from the sequence for request_row_id
         Long requestRowId = (Long) entityManager.createNativeQuery("SELECT nextval('item_row_id_seq')")
@@ -68,9 +69,9 @@ public class RequestService {
 
         // Create and populate the Request object
         Request request = new Request(employee, item,
-                UnitOfMeasurement.valueOf(requestInputDTO.unitOfMeasurement()),
+                item.getUnitOfMeasurement(),
                 requestedQuantity,
-                requestInputDTO.priceWithoutVat(),
+                priceWithoutVat,
                 requestInputDTO.comment(),
                 RequestStatus.NEW);
         request.setRequestRowId(requestRowId);
