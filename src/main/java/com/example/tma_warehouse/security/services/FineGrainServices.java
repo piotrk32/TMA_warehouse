@@ -24,6 +24,11 @@ public class FineGrainServices {
         return getUserEmail().equals(userIdEmail);
     }
 
+    public boolean hasRole(String role) {
+        return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(role));
+    }
+
 
 
 

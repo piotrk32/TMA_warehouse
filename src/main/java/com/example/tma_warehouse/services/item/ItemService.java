@@ -104,9 +104,6 @@ public class ItemService {
             spec = spec.and(ItemSpecification.nameContains(itemRequestDTO.getItemNameSearch()));
         }
 
-
-
-
         return itemRepository.findAll(spec, pageRequest);
     }
 
