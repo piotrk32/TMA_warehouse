@@ -7,6 +7,7 @@ import com.example.tma_warehouse.models.item.Item;
 import com.example.tma_warehouse.models.item.enums.UnitOfMeasurement;
 import com.example.tma_warehouse.models.request.Request;
 import com.example.tma_warehouse.models.request.dtos.RequestInputDTO;
+import com.example.tma_warehouse.models.request.dtos.RequestResponseDTO;
 import com.example.tma_warehouse.models.request.enums.RequestStatus;
 import com.example.tma_warehouse.repositories.RequestRepository;
 import com.example.tma_warehouse.security.services.FineGrainServices;
@@ -78,6 +79,47 @@ public class RequestService {
 
         return requestRepository.saveAndFlush(request);
     }
+
+    @Transactional
+    public Request updateRequestById(RequestInputDTO requestInputDTO, Long requestId) {
+        // Fetch the existing request
+        Request request = getRequestById(requestId);
+
+        Item item = request.getItem();
+
+        // Calculate the difference in quantity
+        BigDecimal oldQuantity = request.getQuantity();
+        BigDecimal newQuantity = requestInputDTO.quantity();
+        BigDecimal quantityDifference = newQuantity.subtract(oldQuantity);
+
+        // Adjust the item's quantity
+        if (quantityDifference.compareTo(BigDecimal.ZERO) != 0) {
+            // Validate that the item has enough quantity available if quantity is being increased
+            if (quantityDifference.compareTo(BigDecimal.ZERO) > 0 && item.getQuantity().compareTo(quantityDifference) < 0) {
+                throw new InsufficientQuantityException("Not enough item stock to fulfill the request update. Available: "
+                        + item.getQuantity() + ", Needed: " + quantityDifference);
+            }
+            item.setQuantity(item.getQuantity().subtract(quantityDifference));
+            itemService.saveItem(item); // Assuming this method exists and properly updates the item
+        }
+
+        // Recalculate price with new quantity
+        if (newQuantity.compareTo(oldQuantity) != 0) {
+            BigDecimal newPriceWithoutVat = item.getPriceWithoutVat().multiply(newQuantity);
+            request.setPriceWithoutVAT(newPriceWithoutVat);
+            request.setQuantity(newQuantity);
+        }
+
+        // Update comment if provided
+        if (requestInputDTO.comment() != null) {
+            request.setComment(requestInputDTO.comment());
+        }
+
+        // Save the updated request
+        return requestRepository.saveAndFlush(request);
+    }
+
+
 
 
 
