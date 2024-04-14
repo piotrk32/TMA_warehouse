@@ -46,9 +46,10 @@ public class EmployeeRequestController {
                     ))
     })
     @PostMapping("")
-    public ResponseEntity<RequestResponseDTO> createRequest(@RequestBody RequestInputDTO requestInputDTO) {
+    public ResponseEntity<com.example.tma_warehouse.utils.ApiResponse<RequestResponseDTO>> createRequest(@RequestBody RequestInputDTO requestInputDTO) {
         RequestResponseDTO requestResponseDTO = requestFacade.createRequest(requestInputDTO);
-        return new ResponseEntity<>(requestResponseDTO, HttpStatus.CREATED);
+        com.example.tma_warehouse.utils.ApiResponse<RequestResponseDTO> response = new com.example.tma_warehouse.utils.ApiResponse<>(requestResponseDTO, "Request created");
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Update existing request", description = "Updates a request based on the provided ID and payload")
