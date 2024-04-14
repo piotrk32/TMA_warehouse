@@ -46,20 +46,27 @@ public class RequestService {
 
         Item item = itemService.getItemById(requestInputDTO.itemId());
 
-        // Fetch the next value from the sequence
+        // Check if the requested quantity is available
+        if (item.getQuantity().compareTo(requestInputDTO.quantity()) < 0) {
+            throw new RuntimeException("Insufficient item quantity available");
+        }
+
+        // Reduce the item's quantity by the requested quantity
+        item.setQuantity(item.getQuantity().subtract(requestInputDTO.quantity()));
+        itemService.saveItem(item); // Now we have a saveItem method in itemService
+
+        // Fetch the next value from the sequence for request_row_id
         Long requestRowId = (Long) entityManager.createNativeQuery("SELECT nextval('item_row_id_seq')")
                 .getSingleResult();
 
         // Create and populate the Request object
-        Request request = new Request();
-        request.setEmployee(employee);
-        request.setItem(item);
-        request.setUnitOfMeasurement(UnitOfMeasurement.valueOf(requestInputDTO.unitOfMeasurement()));
-        request.setQuantity(requestInputDTO.quantity());
-        request.setPriceWithoutVAT(requestInputDTO.priceWithoutVat());
-        request.setComment(requestInputDTO.comment());
-        request.setStatus(RequestStatus.NEW);
-        request.setRequestRowId(requestRowId); // Set the fetched sequence value
+        Request request = new Request(employee, item,
+                UnitOfMeasurement.valueOf(requestInputDTO.unitOfMeasurement()),
+                requestInputDTO.quantity(),
+                requestInputDTO.priceWithoutVat(),
+                requestInputDTO.comment(),
+                RequestStatus.NEW);
+        request.setRequestRowId(requestRowId);
 
         return requestRepository.saveAndFlush(request);
     }
@@ -67,5 +74,7 @@ public class RequestService {
         Request request = getRequestById(requestId);
         requestRepository.delete(request);
     }
+
+
 
 }

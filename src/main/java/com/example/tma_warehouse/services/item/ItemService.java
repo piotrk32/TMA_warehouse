@@ -28,6 +28,11 @@ public class ItemService {
         return item;
     }
 
+    public Item saveItem(Item item) {
+        return itemRepository.save(item);
+    }
+
+
     public Item createItem(ItemInputDTO itemInputDTO) {
         ItemGroup itemGroup = ItemGroup.valueOf(itemInputDTO.itemGroup());
         UnitOfMeasurement unitOfMeasurement = UnitOfMeasurement.valueOf(itemInputDTO.unitOfMeasurement());
@@ -98,6 +103,8 @@ public class ItemService {
         if (itemRequestDTO.getItemNameSearch() != null) { // Załóżmy, że dodałeś pole nameSearch do ItemRequestDTO
             spec = spec.and(ItemSpecification.nameContains(itemRequestDTO.getItemNameSearch()));
         }
+
+
 
 
         return itemRepository.findAll(spec, pageRequest);
