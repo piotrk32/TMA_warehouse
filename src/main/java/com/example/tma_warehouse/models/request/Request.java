@@ -48,13 +48,15 @@ public class Request extends BasicEntity {
     @Column(name = "status")
     RequestStatus status; // Assuming RequestStatus is an Enum representing the status
 
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "request_row_id_gen")
+    @SequenceGenerator(name = "request_row_id_gen", sequenceName = "request_row_id_seq", allocationSize = 1)
     @Column(name = "request_row_id", updatable = false, nullable = false)
-    Long requestRowId;
+    private Long requestRowId;
 
     // Constructor, including all fields except 'requestId' which is auto-generated
     public Request(Employee employee, Item item, UnitOfMeasurement unitOfMeasurement,
                    BigDecimal quantity, BigDecimal priceWithoutVAT, String comment,
-                   RequestStatus status, Long requestRowId) {
+                   RequestStatus status) {
         this.employee = employee;
         this.item = item;
         this.unitOfMeasurement = unitOfMeasurement;
@@ -62,6 +64,5 @@ public class Request extends BasicEntity {
         this.priceWithoutVAT = priceWithoutVAT;
         this.comment = comment;
         this.status = status;
-        this.requestRowId = requestRowId;
     }
 }
