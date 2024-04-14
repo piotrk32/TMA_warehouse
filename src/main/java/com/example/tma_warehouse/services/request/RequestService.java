@@ -120,16 +120,6 @@ public class RequestService {
         return requestRepository.saveAndFlush(request);
     }
 
-    //MOVE TO ADMINISTRATOR
-    @PreAuthorize("(#status != 'ARCHIVED') or hasAuthority('ROLE_ADMINISTRATOR')")
-    public void deleteRequest(Long requestId) {
-        Request request = getRequestById(requestId);
-        if (request.getStatus() == RequestStatus.ARCHIVED && !fineGrainServices.hasRole("ROLE_ADMINISTRATOR")) {
-            throw new IllegalStateException("Only administrators can delete archived requests.");
-        }
-        requestRepository.delete(request);
-    }
-
     public Request changeRequestStatus(Long requestId, RequestStatus newStatus) {
         // Fetch the existing request
         Request request = getRequestById(requestId);
@@ -144,6 +134,16 @@ public class RequestService {
 
         // Save and return the updated request
         return requestRepository.saveAndFlush(request);
+    }
+
+    //MOVE TO ADMINISTRATOR
+    @PreAuthorize("(#status != 'ARCHIVED') or hasAuthority('ROLE_ADMINISTRATOR')")
+    public void deleteRequest(Long requestId) {
+        Request request = getRequestById(requestId);
+        if (request.getStatus() == RequestStatus.ARCHIVED && !fineGrainServices.hasRole("ROLE_ADMINISTRATOR")) {
+            throw new IllegalStateException("Only administrators can delete archived requests.");
+        }
+        requestRepository.delete(request);
     }
 
 
