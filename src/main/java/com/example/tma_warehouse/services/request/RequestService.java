@@ -18,6 +18,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -116,6 +117,32 @@ public class RequestService {
         }
 
         // Save the updated request
+        return requestRepository.saveAndFlush(request);
+    }
+
+    //MOVE TO ADMINISTRATOR
+    @PreAuthorize("(#status != 'ARCHIVED') or hasAuthority('ROLE_ADMINISTRATOR')")
+    public void deleteRequest(Long requestId) {
+        Request request = getRequestById(requestId);
+        if (request.getStatus() == RequestStatus.ARCHIVED && !fineGrainServices.hasRole("ROLE_ADMINISTRATOR")) {
+            throw new IllegalStateException("Only administrators can delete archived requests.");
+        }
+        requestRepository.delete(request);
+    }
+
+    public Request changeRequestStatus(Long requestId, RequestStatus newStatus) {
+        // Fetch the existing request
+        Request request = getRequestById(requestId);
+
+        // Check if the current status is ARCHIVED and block status change if true
+        if (request.getStatus() == RequestStatus.ARCHIVED) {
+            throw new IllegalStateException("Cannot change the status of an archived request.");
+        }
+
+        // Update the status
+        request.setStatus(newStatus);
+
+        // Save and return the updated request
         return requestRepository.saveAndFlush(request);
     }
 
