@@ -1,5 +1,5 @@
 CREATE SEQUENCE IF NOT EXISTS public.id_seq AS BIGINT START WITH 1000;
-CREATE SEQUENCE IF NOT EXISTS item_row_id_seq INCREMENT BY 1 START WITH 1;
+CREATE SEQUENCE IF NOT EXISTS request_row_id_seq INCREMENT BY 1 START WITH 1;
 
 -- Users table
 CREATE TABLE IF NOT EXISTS users (
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS items (
 -- Requests table
 CREATE TABLE IF NOT EXISTS requests (
                                         id BIGINT PRIMARY KEY DEFAULT nextval('id_seq'),
-                                        request_row_id BIGINT NOT NULL DEFAULT nextval('item_row_id_seq'),
+                                        request_row_id BIGINT NOT NULL DEFAULT nextval('request_row_id_seq'),
                                         employee_id BIGINT NOT NULL,
                                         item_id BIGINT NOT NULL,
                                         unit_of_measurement VARCHAR(255) NOT NULL,
@@ -59,4 +59,4 @@ CREATE TABLE IF NOT EXISTS requests (
                                         CONSTRAINT fk_employee FOREIGN KEY (employee_id) REFERENCES public.users(id),
                                         CONSTRAINT fk_item FOREIGN KEY (item_id) REFERENCES public.items(id)
 );
-);
+
