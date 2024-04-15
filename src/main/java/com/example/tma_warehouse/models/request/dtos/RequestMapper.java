@@ -11,13 +11,9 @@ public class RequestMapper {
                 .builder()
                 .requestId(request.getId())
                 .employeeName(fullName)
-                .itemId(request.getItem().getId())
-                .unitOfMeasurement(request.getUnitOfMeasurement().name())
-                .quantity(request.getQuantity())
                 .priceWithoutVat(request.getPriceWithoutVAT())
                 .comment(request.getComment())
                 .status(request.getStatus().name())
-                .requestRowId(request.getRequestRowId())
                 .build();
     }
 }
