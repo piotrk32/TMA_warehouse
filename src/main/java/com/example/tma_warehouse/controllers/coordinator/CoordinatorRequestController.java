@@ -23,7 +23,7 @@ public class CoordinatorRequestController {
 
     private final RequestFacade requestFacade;
 
-    @Operation(summary = "Update existing item", description = "Updates an item based on the provided ID and payload")
+    @Operation(summary = "Change request status", description = "Changes request status")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
