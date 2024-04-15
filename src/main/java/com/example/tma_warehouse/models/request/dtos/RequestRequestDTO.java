@@ -24,11 +24,14 @@ public class RequestRequestDTO {
     private String size = "10";
 
     @Schema(example = "item")
-    private String sortParam = "item"; // Assuming you want to sort by item details or item id
+    private String sortParam = "status";
 
     @Schema(example = "ASC")
     private String direction = "ASC";
 
+    @Schema(example = "Car")
+    @Length(min = 3, message = "Item name search must be at least 3 characters long.")
+    private String employeeNameSearch = null;
 
     @Schema(example = "2021-10-01")
     private String fromDate = null; // Assuming filter by the date range
@@ -38,11 +41,11 @@ public class RequestRequestDTO {
 
     @Schema(example = "200")
     @Min(value = 0, message = "Minimum quantity must not be less than zero.")
-    private BigDecimal quantityFrom = null;
+    private BigDecimal priceWithoutVatFrom = null;
 
     @Schema(example = "500")
     @Min(value = 0, message = "Maximum quantity must not be less than zero.")
-    private BigDecimal quantityTo = null;
+    private BigDecimal priceWithoutVatTo = null;
 
     @Schema(example = "New")
     @Length(min = 3, message = "Status search must be at least 3 characters long.")
