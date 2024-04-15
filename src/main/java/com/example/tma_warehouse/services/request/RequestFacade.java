@@ -1,5 +1,8 @@
 package com.example.tma_warehouse.services.request;
 
+import com.example.tma_warehouse.models.RowRequest.RowRequest;
+import com.example.tma_warehouse.models.RowRequest.dtos.RowRequestInputDTO;
+import com.example.tma_warehouse.models.RowRequest.dtos.RowRequestResponseDTO;
 import com.example.tma_warehouse.models.item.Item;
 import com.example.tma_warehouse.models.item.dtos.ItemInputDTO;
 import com.example.tma_warehouse.models.item.dtos.ItemResponseDTO;
@@ -10,6 +13,7 @@ import com.example.tma_warehouse.models.request.enums.RequestStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import static com.example.tma_warehouse.models.RowRequest.dtos.RowRequestMapper.mapToRowRequestResponseDTO;
 import static com.example.tma_warehouse.models.item.dtos.ItemMapper.mapToItemResponseDTO;
 import static com.example.tma_warehouse.models.request.dtos.RequestMapper.mapToRequestResponseDTO;
 
@@ -43,6 +47,10 @@ public class RequestFacade {
         Request request = requestService.changeRequestStatus(requestId, newStatus);
         return mapToRequestResponseDTO(request);  // Convert the updated Request entity to a DTO
     }
+
+
+
+
 
 
 
