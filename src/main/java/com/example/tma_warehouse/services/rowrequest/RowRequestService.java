@@ -24,6 +24,12 @@ public class RowRequestService {
     private final RequestRepository requestRepository;
     private final RowRequestRepository rowRequestRepository;
 
+    public RowRequest getRowRequestById(Long rowRequestId) {
+        RowRequest rowRequest = rowRequestRepository.findById(rowRequestId)
+                .orElseThrow(() -> new EntityNotFoundException("Request", "No request found with id: " + rowRequestId));
+        return rowRequest;
+    }
+
     @Transactional
     public RowRequest addItemToRequest(Long requestId, RowRequestInputDTO rowRequestInputDTO) {
         // Fetch the request to which we want to add the item
@@ -58,4 +64,6 @@ public class RowRequestService {
         // Save the new RowRequest in the repository
         return rowRequestRepository.save(newRowRequest);
     }
+
+
 }
