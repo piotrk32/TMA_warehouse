@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @NoArgsConstructor
-@Schema(description = "Data Transfer Object for request filtering and pagination")
+@Schema(description = "Data Transfer Object for row request filtering and pagination")
 public class RequestRequestDTO {
 
     @Schema(example = "0")
@@ -23,25 +23,15 @@ public class RequestRequestDTO {
     @Min(value = 1, message = "Page size must be at least one.")
     private String size = "10";
 
-    @Schema(example = "employeeName")
-    private String sortParam = "employeeName";
+    @Schema(example = "item")
+    private String sortParam = "item"; // Assuming you want to sort by item details or item id
 
     @Schema(example = "ASC")
     private String direction = "ASC";
 
-    @Schema(example = "John Doe")
-    @Length(min = 3, message = "Employee name search must be at least 3 characters long.")
-    private String employeeNameSearch = null;
-
-    @Schema(example = "12345")
-    private Long itemId = null;
-
-    @Schema(example = "New")
-    @Length(min = 3, message = "Status search must be at least 3 characters long.")
-    private String status = null;
 
     @Schema(example = "2021-10-01")
-    private String fromDate = null;
+    private String fromDate = null; // Assuming filter by the date range
 
     @Schema(example = "2021-12-01")
     private String toDate = null;
@@ -53,4 +43,13 @@ public class RequestRequestDTO {
     @Schema(example = "500")
     @Min(value = 0, message = "Maximum quantity must not be less than zero.")
     private BigDecimal quantityTo = null;
+
+    @Schema(example = "New")
+    @Length(min = 3, message = "Status search must be at least 3 characters long.")
+    private String status = null; // Assuming you want to filter by status if applicable
+
+    @Schema(example = "Comment here")
+    @Length(min = 3, message = "Comment must be at least 3 characters long.")
+    private String comment = null; // Assuming you want to filter by comments in the row request
+
 }
