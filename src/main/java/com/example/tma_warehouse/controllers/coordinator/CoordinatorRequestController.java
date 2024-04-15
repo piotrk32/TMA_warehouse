@@ -52,4 +52,20 @@ public class CoordinatorRequestController {
         RequestResponseDTO response = requestFacade.changeRequestStatus(requestId, newStatus);
         return ResponseEntity.ok(response);
     }
+
+    @Operation(summary = "Get a Request by ID", description = "Retrieves request details by its ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved the request",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = RequestResponseDTO.class))}),
+            @ApiResponse(responseCode = "404", description = "Request not found",
+                    content = @Content),
+            @ApiResponse(responseCode = "400", description = "Invalid ID supplied",
+                    content = @Content)
+    })
+    @GetMapping("/{requestId}")
+    public ResponseEntity<RequestResponseDTO> getRequestById(@PathVariable Long requestId) {
+        RequestResponseDTO requestResponseDTO = requestFacade.getRequestById(requestId);
+        return ResponseEntity.ok(requestResponseDTO);
+    }
 }
