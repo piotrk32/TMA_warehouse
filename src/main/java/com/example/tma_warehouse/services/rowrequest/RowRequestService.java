@@ -3,6 +3,7 @@ package com.example.tma_warehouse.services.rowrequest;
 import com.example.tma_warehouse.exceptions.EntityNotFoundException;
 import com.example.tma_warehouse.exceptions.InsufficientQuantityException;
 import com.example.tma_warehouse.models.RowRequest.RowRequest;
+import com.example.tma_warehouse.models.RowRequest.dtos.RowRequestDTO;
 import com.example.tma_warehouse.models.RowRequest.dtos.RowRequestInputDTO;
 import com.example.tma_warehouse.models.item.Item;
 import com.example.tma_warehouse.models.request.Request;
@@ -12,6 +13,11 @@ import com.example.tma_warehouse.repositories.RowRequestRepository;
 import com.example.tma_warehouse.services.item.ItemService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -58,14 +64,79 @@ public class RowRequestService {
         newRowRequest.setItem(item);
         newRowRequest.setUnitOfMeasurement(item.getUnitOfMeasurement()); // Set from the Item directly
         newRowRequest.setQuantity(rowRequestInputDTO.quantity());
-        newRowRequest.setPriceWithoutVAT(priceWithoutVAT);
+        newRowRequest.setPriceWithoutVat(priceWithoutVAT);
         newRowRequest.setComment(rowRequestInputDTO.comment());
 
         // Save the new RowRequest in the repository
         return rowRequestRepository.save(newRowRequest);
     }
 
+    public Page<RowRequest> getRowsRequest(RowRequestDTO rowRequestDTO) {
+
+//        PageRequest pageRequest = PageRequest.of(
+//                Integer.parseInt(rowRequestDTO.getPage()),
+//                Integer.parseInt(rowRequestDTO.getSize()),
+//                Sort.Direction.fromString(rowRequestDTO.getDirection()),
+//                rowRequestDTO.getSortParam());
+        Specification<RowRequest> spec = Specification.where(null);
+
+//        try {
+//            if (requestRequestDTO.getFromDate() != null && requestRequestDTO.getToDate() != null) {
+//                spec = spec.and(RequestSpecification.createdBetween(requestRequestDTO.getFromDate(), requestRequestDTO.getToDate()));
+//            }
+//        } catch (DateTimeParseException e) {
+//            // Log error or handle it based on your application's requirements
+//            System.err.println("Error parsing dates: " + e.getMessage());
+//        }
+        if (rowRequestDTO.getPriceWithoutVatFrom() != null && rowRequestDTO.getPriceWithoutVatTo() != null) {
+            spec = spec.and(RowRequestSpecification.priceWithoutVatBetween(
+                    new BigDecimal(String.valueOf(rowRequestDTO.getPriceWithoutVatFrom())),
+                    new BigDecimal(String.valueOf(rowRequestDTO.getPriceWithoutVatTo()))
+            ));
+        }
 
 
+        // Define sorting and pagination
+        Pageable pageable = PageRequest.of(
+                Integer.parseInt(rowRequestDTO.getPage()),
+                Integer.parseInt(rowRequestDTO.getSize()),
+                Sort.by(Sort.Direction.fromString(rowRequestDTO.getDirection()), rowRequestDTO.getSortParam())
+        );
+
+        return rowRequestRepository.findAll(spec, pageable);
+    }
+
+
+    public Page<RowRequest> getAllRows(int page, int size, String sortBy, String sortDir, Long requestId, Long itemId) {
+        Sort.Direction direction = Sort.Direction.fromString(sortDir);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        Specification<RowRequest> spec = Specification.where(null);
+
+        if (requestId != null) {
+            spec = spec.and(RowRequestSpecification.hasRequestId(requestId));
+        }
+        if (itemId != null) {
+            spec = spec.and(RowRequestSpecification.hasItemId(itemId));
+        }
+
+        return rowRequestRepository.findAll(spec, pageable);
+    }
+
+//    public Page<RowRequest> findAllByRequestId(Long requestId, Pageable pageable) {
+//        Specification<RowRequest> spec = RowRequestSpecification.hasRequestId(requestId);
+//        return rowRequestRepository.findAll(spec, pageable);
+//    }
+
+    public Page<RowRequest> getRowsForRequest(int page, int size, String sortBy, String sortDir, Long requestId) {
+        Sort.Direction direction = Sort.Direction.fromString(sortDir);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        Specification<RowRequest> spec = Specification.where(null);
+
+        if (requestId != null) {
+            spec = spec.and(RowRequestSpecification.hasRequestId(requestId));
+        }
+
+        return rowRequestRepository.findAll(spec, pageable);
+    }
 
 }
