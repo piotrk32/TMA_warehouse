@@ -1,5 +1,6 @@
 package com.example.tma_warehouse.models.item;
 
+import com.example.tma_warehouse.models.RowRequest.RowRequest;
 import com.example.tma_warehouse.models.basic.BasicEntity;
 import com.example.tma_warehouse.models.item.enums.ItemGroup;
 import com.example.tma_warehouse.models.item.enums.UnitOfMeasurement;
@@ -22,7 +23,6 @@ public class Item extends BasicEntity {
 
     @Column(name = "item_name")
     private String itemName;
-
 
     @Column(name = "item_group")
     @Enumerated(EnumType.STRING)
@@ -50,6 +50,9 @@ public class Item extends BasicEntity {
     @Column(name = "photo")
     private String photoPath; // może przechowywać ścieżkę do zdjęcia lub UR
 
+    @OneToOne(mappedBy = "item", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private RowRequest rowRequest;
+
     public Item(String itemName, ItemGroup itemGroup, UnitOfMeasurement unitOfMeasurement, BigDecimal quantity, BigDecimal priceWithoutVat, String status, String storageLocation, String contactPerson, String photoPath) {
         this.itemName = itemName;
         this.itemGroup = itemGroup;
@@ -61,6 +64,5 @@ public class Item extends BasicEntity {
         this.contactPerson = contactPerson;
         this.photoPath = photoPath;
     }
-
 
 }
