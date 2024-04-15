@@ -124,7 +124,7 @@ public class CoordinatorItemController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Successful offering acquisition",
+                    description = "Successful item acquisition",
                     content = @Content(
                             mediaType = "application/json",
                             array = @ArraySchema(
