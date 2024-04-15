@@ -5,12 +5,17 @@ import com.example.tma_warehouse.models.RowRequest.dtos.RowRequestInputDTO;
 import com.example.tma_warehouse.models.RowRequest.dtos.RowRequestResponseDTO;
 import com.example.tma_warehouse.models.item.Item;
 import com.example.tma_warehouse.models.item.dtos.ItemInputDTO;
+import com.example.tma_warehouse.models.item.dtos.ItemMapper;
+import com.example.tma_warehouse.models.item.dtos.ItemRequestDTO;
 import com.example.tma_warehouse.models.item.dtos.ItemResponseDTO;
 import com.example.tma_warehouse.models.request.Request;
 import com.example.tma_warehouse.models.request.dtos.RequestInputDTO;
+import com.example.tma_warehouse.models.request.dtos.RequestMapper;
+import com.example.tma_warehouse.models.request.dtos.RequestRequestDTO;
 import com.example.tma_warehouse.models.request.dtos.RequestResponseDTO;
 import com.example.tma_warehouse.models.request.enums.RequestStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import static com.example.tma_warehouse.models.RowRequest.dtos.RowRequestMapper.mapToRowRequestResponseDTO;
@@ -46,6 +51,10 @@ public class RequestFacade {
     public RequestResponseDTO changeRequestStatus(Long requestId, RequestStatus newStatus) {
         Request request = requestService.changeRequestStatus(requestId, newStatus);
         return mapToRequestResponseDTO(request);  // Convert the updated Request entity to a DTO
+    }
+
+    public Page<RequestResponseDTO> getItems(RequestRequestDTO requestRequestDTO) {
+        return requestService.getRequests(requestRequestDTO).map(RequestMapper::mapToRequestResponseDTO);
     }
 
 
