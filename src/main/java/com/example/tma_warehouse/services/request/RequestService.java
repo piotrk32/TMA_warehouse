@@ -3,13 +3,11 @@ package com.example.tma_warehouse.services.request;
 import com.example.tma_warehouse.exceptions.EntityNotFoundException;
 import com.example.tma_warehouse.exceptions.InsufficientQuantityException;
 import com.example.tma_warehouse.models.RowRequest.RowRequest;
-import com.example.tma_warehouse.models.RowRequest.dtos.RowRequestInputDTO;
 import com.example.tma_warehouse.models.employee.Employee;
 import com.example.tma_warehouse.models.item.Item;
-import com.example.tma_warehouse.models.item.enums.UnitOfMeasurement;
 import com.example.tma_warehouse.models.request.Request;
 import com.example.tma_warehouse.models.request.dtos.RequestInputDTO;
-import com.example.tma_warehouse.models.request.dtos.RequestResponseDTO;
+import com.example.tma_warehouse.models.request.dtos.RequestRequestDTO;
 import com.example.tma_warehouse.models.request.enums.RequestStatus;
 import com.example.tma_warehouse.repositories.RequestRepository;
 import com.example.tma_warehouse.repositories.RowRequestRepository;
@@ -21,11 +19,15 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -189,6 +191,50 @@ public class RequestService {
         return requestRepository.saveAndFlush(request);
     }
 
+    public Page<Request> getRequests(RequestRequestDTO requestRequestDTO) {
+
+        PageRequest pageRequest = PageRequest.of(
+                Integer.parseInt(requestRequestDTO.getPage()),
+                Integer.parseInt(requestRequestDTO.getSize()),
+                Sort.Direction.fromString(requestRequestDTO.getDirection()),
+                requestRequestDTO.getSortParam());
+        Specification<Request> spec = Specification.where(null);
+
+        if (requestRequestDTO.getEmployeeNameSearch() != null) {
+            spec = spec.and(RequestSpecification.hasEmployeeName(requestRequestDTO.getEmployeeNameSearch()));
+        }
+        if (requestRequestDTO.getStatus() != null) {
+            spec = spec.and(RequestSpecification.hasStatus(requestRequestDTO.getStatus()));
+        }
+//        try {
+//            if (criteria.getFromDate() != null && criteria.getToDate() != null) {
+//                spec = spec.and(RequestSpecification.createdBetween(criteria.getFromDate(), criteria.getToDate()));
+//            }
+//        } catch (DateTimeParseException e) {
+//            // Log error or handle it based on your application's requirements
+//            System.err.println("Error parsing dates: " + e.getMessage());
+//        }
+        if (requestRequestDTO.getPriceWithoutVatFrom() != null && requestRequestDTO.getPriceWithoutVatTo() != null) {
+            spec = spec.and(RequestSpecification.priceWithoutVatBetween(
+                    new BigDecimal(String.valueOf(requestRequestDTO.getPriceWithoutVatFrom())),
+                    new BigDecimal(String.valueOf(requestRequestDTO.getPriceWithoutVatTo()))
+            ));
+        }
+        if (requestRequestDTO.getComment() != null) {
+            spec = spec.and(RequestSpecification.hasCommentLike(requestRequestDTO.getComment()));
+        }
+
+        // Define sorting and pagination
+        Pageable pageable = PageRequest.of(
+                Integer.parseInt(requestRequestDTO.getPage()),
+                Integer.parseInt(requestRequestDTO.getSize()),
+                Sort.by(Sort.Direction.fromString(requestRequestDTO.getDirection()), requestRequestDTO.getSortParam())
+        );
+
+        return requestRepository.findAll(spec, pageRequest);
+    }
+
+
     //MOVE TO ADMINISTRATOR
     @PreAuthorize("(#status != 'ARCHIVED') or hasAuthority('ROLE_ADMINISTRATOR')")
     public void deleteRequest(Long requestId) {
@@ -198,9 +244,4 @@ public class RequestService {
         }
         requestRepository.delete(request);
     }
-
-
-
-
-
 }
