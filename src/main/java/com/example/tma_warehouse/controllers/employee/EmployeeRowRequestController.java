@@ -23,7 +23,7 @@ public class EmployeeRowRequestController {
 
     private final RowRequestFacade rowRequestFacade;
 
-    @Operation(summary = "Get a RowRequest by ID", description = "Retrieves a row request details by its ID.")
+    @Operation(summary = "Get a row by ID", description = "Retrieves a row request details by its ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved the row request",
                     content = {@Content(mediaType = "application/json",
