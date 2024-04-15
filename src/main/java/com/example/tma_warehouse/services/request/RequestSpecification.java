@@ -36,7 +36,7 @@ public class RequestSpecification {
     public static Specification<Request> priceWithoutVatBetween(BigDecimal priceWithoutVatFrom, BigDecimal priceWithoutVatTo) {
         return (root, query, criteriaBuilder) -> {
             if (priceWithoutVatFrom != null && priceWithoutVatTo != null) {
-                return criteriaBuilder.between(root.get("price_wothout_vat"), priceWithoutVatFrom, priceWithoutVatTo);
+                return criteriaBuilder.between(root.get("price_without_vat"), priceWithoutVatFrom, priceWithoutVatTo);
             }
             return criteriaBuilder.conjunction();
         };

@@ -68,47 +68,6 @@ public class RequestService {
 
 
 
-//    @Transactional
-//    public Request createRequest(RequestInputDTO requestInputDTO) {
-//        String userEmail = fineGrainServices.getUserEmail();
-//        Employee employee = employeeService.findEmployeeByEmail(userEmail)
-//                .orElseThrow(() -> new RuntimeException("Employee not found for the email: " + userEmail));
-//
-//        Item item = itemService.getItemById(requestInputDTO.itemId());
-//
-//        BigDecimal availableQuantity = item.getQuantity();
-//        BigDecimal requestedQuantity = requestInputDTO.quantity();
-//        if (availableQuantity.compareTo(requestedQuantity) < 0) {
-//            throw new InsufficientQuantityException("Requested quantity for item ID " + requestInputDTO.itemId()
-//                    + " exceeds available stock. Available: " + availableQuantity
-//                    + ", Requested: " + requestedQuantity);
-//        }
-//
-//        // Calculate priceWithoutVat as item's price multiplied by the requested quantity
-//        BigDecimal priceWithoutVat = item.getPriceWithoutVat().multiply(requestedQuantity);
-//
-//        // Reduce the item's quantity by the requested quantity
-//        item.setQuantity(availableQuantity.subtract(requestedQuantity));
-//        itemService.saveItem(item);
-//
-//        // Fetch the next value from the sequence for request_row_id
-//        Long requestRowId = (Long) entityManager.createNativeQuery("SELECT nextval('item_row_id_seq')")
-//                .getSingleResult();
-//
-//        // Create and populate the Request object
-//        Request request = new Request(employee,item,
-////                item.getUnitOfMeasurement(),
-//                requestedQuantity,
-//                priceWithoutVat,
-//                requestInputDTO.comment(),
-//                RequestStatus.NEW);
-////        request.setRequestRowId(requestRowId);
-//
-//        return requestRepository.saveAndFlush(request);
-//    }
-
-
-
     //TODO NAPRAWIC TO
     @Transactional
     public Request updateRequestById(RequestInputDTO requestInputDTO, Long requestId) {
@@ -172,7 +131,7 @@ public class RequestService {
                     throw new InsufficientQuantityException("Insufficient stock for item ID " + item.getId());
                 }
                 // Calculate the total cost
-                BigDecimal rowCost = row.getPriceWithoutVAT(); // Assuming this is calculated as quantity * price per item when row was created
+                BigDecimal rowCost = row.getPriceWithoutVat(); // Assuming this is calculated as quantity * price per item when row was created
                 totalCost = totalCost.add(rowCost);
 
                 // Update the item's available quantity to reflect the amount added to the request
@@ -207,8 +166,8 @@ public class RequestService {
             spec = spec.and(RequestSpecification.hasStatus(requestRequestDTO.getStatus()));
         }
 //        try {
-//            if (criteria.getFromDate() != null && criteria.getToDate() != null) {
-//                spec = spec.and(RequestSpecification.createdBetween(criteria.getFromDate(), criteria.getToDate()));
+//            if (requestRequestDTO.getFromDate() != null && requestRequestDTO.getToDate() != null) {
+//                spec = spec.and(RequestSpecification.createdBetween(requestRequestDTO.getFromDate(), requestRequestDTO.getToDate()));
 //            }
 //        } catch (DateTimeParseException e) {
 //            // Log error or handle it based on your application's requirements
