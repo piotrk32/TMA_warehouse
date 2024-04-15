@@ -158,7 +158,10 @@ public class RequestService {
             throw new IllegalStateException("Cannot change the status of an archived request.");
         }
 
-        // Only update item quantities when the request is accepted
+        // Prepare to calculate the total cost if the status is being set to APPROVED
+        BigDecimal totalCost = BigDecimal.ZERO;
+
+        // Only update item quantities and calculate costs when the request is accepted
         if (newStatus == RequestStatus.APPROVED) {
             for (RowRequest row : request.getRowRequests()) {
                 Item item = row.getItem();
@@ -166,9 +169,17 @@ public class RequestService {
                 if (newQuantity.compareTo(BigDecimal.ZERO) < 0) {
                     throw new InsufficientQuantityException("Insufficient stock for item ID " + item.getId());
                 }
+                // Calculate the total cost
+                BigDecimal rowCost = row.getPriceWithoutVAT(); // Assuming this is calculated as quantity * price per item when row was created
+                totalCost = totalCost.add(rowCost);
+
+                // Update the item's available quantity to reflect the amount added to the request
                 item.setQuantity(newQuantity);
                 itemService.saveItem(item);
             }
+
+            // Set the total cost to the request
+            request.setPriceWithoutVAT(totalCost); // Ensure your Request entity has a field to store the total cost
         }
 
         // Update the status
