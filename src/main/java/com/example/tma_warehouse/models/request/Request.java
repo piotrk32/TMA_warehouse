@@ -30,16 +30,6 @@ public class Request extends BasicEntity {
     @JoinColumn(name = "employee_id", referencedColumnName = "id")
     private Employee employee;
 
-//    @OneToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "item_id", referencedColumnName = "id")
-//    Item item; // Relation to Item entity already exists
-
-//    @Enumerated(EnumType.STRING)
-//    @Column(name = "unit_of_measurement")
-//    UnitOfMeasurement unitOfMeasurement; // Assuming UnitOfMeasurement is an Enum
-
-//    @Column(name = "quantity")
-//    BigDecimal quantity;
 
     @Column(name = "price_without_vat", nullable = true)
     BigDecimal priceWithoutVAT;
@@ -54,20 +44,12 @@ public class Request extends BasicEntity {
     @OneToMany(mappedBy = "request", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RowRequest> rowRequests = new ArrayList<>();
 
-//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "request_row_id_gen")
-////    @SequenceGenerator(name = "request_row_id_gen", sequenceName = "request_row_id_seq", allocationSize = 1)
-////    @Column(name = "request_row_id", updatable = false, nullable = false)
-////    private Long requestRowId;
-
 
     // Constructor, including all fields except 'requestId' which is auto-generated
     public Request(Employee employee, Item item,
                    BigDecimal quantity, BigDecimal priceWithoutVAT, String comment,
                    RequestStatus status) {
         this.employee = employee;
-//        this.item = item;
-//        this.unitOfMeasurement = unitOfMeasurement;
-//        this.quantity = quantity;
         this.priceWithoutVAT = priceWithoutVAT;
         this.comment = comment;
         this.status = status;

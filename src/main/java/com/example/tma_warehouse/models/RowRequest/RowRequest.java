@@ -12,8 +12,6 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "rows_requests")
@@ -27,7 +25,7 @@ public class RowRequest extends BasicEntity {
     @JoinColumn(name = "request_id", nullable = false)
     private Request request;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToOne
     @JoinColumn(name = "item_id", referencedColumnName = "id")
     private Item item;
 
@@ -40,18 +38,16 @@ public class RowRequest extends BasicEntity {
     BigDecimal quantity;
 
     @Column(name = "price_without_vat")
-    BigDecimal priceWithoutVAT;
+    BigDecimal priceWithoutVat;
 
     @Column(name = "comment", columnDefinition = "TEXT")
     String comment;
 
-    public RowRequest(Request request, UnitOfMeasurement unitOfMeasurement, BigDecimal quantity, BigDecimal priceWithoutVAT, String comment) {
+    public RowRequest(Request request, UnitOfMeasurement unitOfMeasurement, BigDecimal quantity, BigDecimal priceWithoutVat, String comment) {
         this.request = request;
         this.unitOfMeasurement = unitOfMeasurement;
         this.quantity = quantity;
-        this.priceWithoutVAT = priceWithoutVAT;
+        this.priceWithoutVat = priceWithoutVat;
         this.comment = comment;
     }
-
-    // Getters and setters
 }

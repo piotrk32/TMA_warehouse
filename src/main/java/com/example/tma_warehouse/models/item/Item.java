@@ -12,6 +12,7 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "items")
@@ -50,8 +51,8 @@ public class Item extends BasicEntity {
     @Column(name = "photo")
     private String photoPath; // może przechowywać ścieżkę do zdjęcia lub UR
 
-    @OneToOne(mappedBy = "item", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private RowRequest rowRequest;
+    @OneToMany(mappedBy = "item", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<RowRequest> rowRequests;
 
     public Item(String itemName, ItemGroup itemGroup, UnitOfMeasurement unitOfMeasurement, BigDecimal quantity, BigDecimal priceWithoutVat, String status, String storageLocation, String contactPerson, String photoPath) {
         this.itemName = itemName;
