@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @NoArgsConstructor
-@Schema(description = "Data Transfer Object for row request filtering and pagination")
+@Schema(description = "Data Transfer Object for  request filtering and pagination")
 public class RequestRequestDTO {
 
     @Schema(example = "0")
