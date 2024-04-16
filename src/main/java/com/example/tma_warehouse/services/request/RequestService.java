@@ -70,46 +70,33 @@ public class RequestService {
 
     //TODO NAPRAWIC TO
     @Transactional
-    public Request updateRequestById(RequestInputDTO requestInputDTO, Long requestId) {
-        // Fetch the existing request
-        Request request = getRequestById(requestId);
+    public Request updateNewRequest(Long requestId, RequestInputDTO requestInputDTO, Long employeeId) {
+        Request existingRequest = requestRepository.findById(requestId)
+                .orElseThrow(() -> new EntityNotFoundException("Request", "Request not found with id: " + requestId));
 
-//        Item item = request.getItem();
-//
-//        // Calculate the difference in quantity
-//        BigDecimal oldQuantity = request.getQuantity();
-//        BigDecimal newQuantity = requestInputDTO.quantity();
-//        BigDecimal quantityDifference = newQuantity.subtract(oldQuantity);
-//
-//        // Adjust the item's quantity
-//        if (quantityDifference.compareTo(BigDecimal.ZERO) != 0) {
-//            // Validate that the item has enough quantity available if quantity is being increased
-//            if (quantityDifference.compareTo(BigDecimal.ZERO) > 0 && item.getQuantity().compareTo(quantityDifference) < 0) {
-//                throw new InsufficientQuantityException("Not enough item stock to fulfill the request update. Available: "
-//                        + item.getQuantity() + ", Needed: " + quantityDifference);
-//            }
-//            item.setQuantity(item.getQuantity().subtract(quantityDifference));
-//            itemService.saveItem(item); // Assuming this method exists and properly updates the item
-//        }
-//
-//        // Recalculate price with new quantity
-//        if (newQuantity.compareTo(oldQuantity) != 0) {
-//            BigDecimal newPriceWithoutVat = item.getPriceWithoutVat().multiply(newQuantity);
-//            request.setPriceWithoutVAT(newPriceWithoutVat);
-//            request.setQuantity(newQuantity);
-//        }
-//
-//        // Update comment if provided
-//        if (requestInputDTO.comment() != null) {
-//            request.setComment(requestInputDTO.comment());
-//        }
-//
-//        // Save the updated request
-        return requestRepository.saveAndFlush(request);
+        // Check if the request's status is NEW
+        if (existingRequest.getStatus() != RequestStatus.NEW) {
+            throw new IllegalStateException("Only requests with status 'NEW' can be updated.");
+        }
+
+        // Check if the logged-in employee is the one who created the request
+        if (!existingRequest.getEmployee().getId().equals(employeeId)) {
+            throw new SecurityException("You can only update requests that you have created.");
+        }
+
+        // Apply the updates from the RequestUpdateDTO to the existing request
+        // Example: if the comment can be updated
+        if (requestInputDTO.comment() != null) {
+            existingRequest.setComment(requestInputDTO.comment());
+        }
+        // Apply other updates from the DTO...
+
+        // Save and return the updated request
+        return requestRepository.save(existingRequest);
     }
 
     @Transactional
-    public Request changeRequestStatus(Long requestId, RequestStatus newStatus) {
+    public Request changeRequestStatus(Long requestId, RequestStatus newStatus, String comment) {
         // Fetch the existing request
         Request request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new EntityNotFoundException("Request", "Request not found with id: " + requestId));
@@ -119,11 +106,24 @@ public class RequestService {
             throw new IllegalStateException("Cannot change the status of an archived request.");
         }
 
-        // Prepare to calculate the total cost if the status is being set to APPROVED
-        BigDecimal totalCost = BigDecimal.ZERO;
+        // Check if the new status is REJECTED and comment is not provided
+        if (newStatus == RequestStatus.REJECTED && (comment == null || comment.trim().isEmpty())) {
+            throw new IllegalArgumentException("A comment is required when rejecting a request.");
+        }
 
-        // Only update item quantities and calculate costs when the request is accepted
+        // Revert item quantities if changing from APPROVED to REJECTED
+        if (request.getStatus() == RequestStatus.APPROVED && newStatus == RequestStatus.REJECTED) {
+            for (RowRequest row : request.getRowRequests()) {
+                Item item = row.getItem();
+                // Re-add the quantity to the item's stock
+                item.setQuantity(item.getQuantity().add(row.getQuantity()));
+                itemService.saveItem(item);
+            }
+        }
+
+        // Only update item quantities and calculate costs when the request is set to APPROVED
         if (newStatus == RequestStatus.APPROVED) {
+            BigDecimal totalCost = BigDecimal.ZERO;
             for (RowRequest row : request.getRowRequests()) {
                 Item item = row.getItem();
                 BigDecimal newQuantity = item.getQuantity().subtract(row.getQuantity());
@@ -138,17 +138,22 @@ public class RequestService {
                 item.setQuantity(newQuantity);
                 itemService.saveItem(item);
             }
-
             // Set the total cost to the request
-            request.setPriceWithoutVAT(totalCost); // Ensure your Request entity has a field to store the total cost
+            request.setPriceWithoutVAT(totalCost);
+        }
+
+        // Update the comment if provided
+        if (comment != null && !comment.trim().isEmpty()) {
+            request.setComment(comment);
         }
 
         // Update the status
         request.setStatus(newStatus);
 
         // Save and return the updated request
-        return requestRepository.saveAndFlush(request);
+        return requestRepository.save(request);
     }
+
 
     public Page<Request> getRequests(RequestRequestDTO requestRequestDTO) {
 
@@ -165,14 +170,7 @@ public class RequestService {
         if (requestRequestDTO.getStatus() != null) {
             spec = spec.and(RequestSpecification.hasStatus(requestRequestDTO.getStatus()));
         }
-//        try {
-//            if (requestRequestDTO.getFromDate() != null && requestRequestDTO.getToDate() != null) {
-//                spec = spec.and(RequestSpecification.createdBetween(requestRequestDTO.getFromDate(), requestRequestDTO.getToDate()));
-//            }
-//        } catch (DateTimeParseException e) {
-//            // Log error or handle it based on your application's requirements
-//            System.err.println("Error parsing dates: " + e.getMessage());
-//        }
+
         if (requestRequestDTO.getPriceWithoutVatFrom() != null && requestRequestDTO.getPriceWithoutVatTo() != null) {
             spec = spec.and(RequestSpecification.priceWithoutVatBetween(
                     new BigDecimal(String.valueOf(requestRequestDTO.getPriceWithoutVatFrom())),
