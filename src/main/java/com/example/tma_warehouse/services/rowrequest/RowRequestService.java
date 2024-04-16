@@ -71,6 +71,29 @@ public class RowRequestService {
         return rowRequestRepository.save(newRowRequest);
     }
 
+    @Transactional
+    public void removeItemFromRequest(Long requestId, Long rowRequestId) {
+        // Fetch the request to check its status
+        Request existingRequest = requestRepository.findById(requestId)
+                .orElseThrow(() -> new EntityNotFoundException("Request", "Request not found with id: " + requestId));
+
+        // Check if the request is already APPROVED, and if so, throw an exception
+        if (existingRequest.getStatus() == RequestStatus.APPROVED) {
+            throw new IllegalStateException("Cannot remove items from an approved request.");
+        }
+
+        // Fetch the RowRequest to ensure it belongs to the given request
+        RowRequest rowRequest = rowRequestRepository.findById(rowRequestId)
+                .orElseThrow(() -> new EntityNotFoundException("RowRequest", "RowRequest not found with id: " + rowRequestId));
+
+        if (!rowRequest.getRequest().getId().equals(requestId)) {
+            throw new IllegalStateException("RowRequest does not belong to the given Request.");
+        }
+
+        // Delete the RowRequest
+        rowRequestRepository.delete(rowRequest);
+    }
+
     public Page<RowRequest> getRowsRequest(RowRequestDTO rowRequestDTO) {
 
 //        PageRequest pageRequest = PageRequest.of(
@@ -137,6 +160,48 @@ public class RowRequestService {
         }
 
         return rowRequestRepository.findAll(spec, pageable);
+    }
+
+    @Transactional
+    public RowRequest updateRowRequestById(Long rowRequestId, RowRequestInputDTO inputDTO, Long employeeId) {
+        // Fetch the existing row request
+        RowRequest existingRowRequest = rowRequestRepository.findById(rowRequestId)
+                .orElseThrow(() -> new EntityNotFoundException("Request", "Request not found with id: " + rowRequestId));
+
+        // Fetch the request related to the row to check its status and employee
+        Request existingRequest = existingRowRequest.getRequest();
+
+        // Verify that the current employee is the one who created the request or row
+        if (!existingRequest.getEmployee().getId().equals(employeeId)) {
+            throw new SecurityException("You can only update rows that you have created.");
+        }
+
+        // Check if the request is already APPROVED, and if so, throw an exception
+        if (existingRequest.getStatus() == RequestStatus.APPROVED) {
+            throw new IllegalStateException("Cannot update items in an approved request.");
+        }
+
+        // Fetch the item to check the available quantity
+        Item item = itemService.getItemById(inputDTO.itemId());
+
+        // Check if the available quantity of the item allows for updating the request
+        BigDecimal adjustedQuantity = item.getQuantity().add(existingRowRequest.getQuantity()).subtract(inputDTO.quantity());
+        if (adjustedQuantity.compareTo(BigDecimal.ZERO) < 0) {
+            throw new InsufficientQuantityException("Updated quantity exceeds available stock for item ID " + inputDTO.itemId());
+        }
+
+        // Update the RowRequest properties
+        existingRowRequest.setItem(item);
+        existingRowRequest.setQuantity(inputDTO.quantity());
+        existingRowRequest.setComment(inputDTO.comment());
+        // Optionally, update priceWithoutVat if your logic requires
+
+        // Update the item's available quantity
+        item.setQuantity(adjustedQuantity);
+        itemService.saveItem(item);
+
+        // Save the updated RowRequest in the repository
+        return rowRequestRepository.save(existingRowRequest);
     }
 
 }
