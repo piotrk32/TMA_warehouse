@@ -29,8 +29,8 @@ public class RequestFacade {
         return mapToRequestResponseDTO(request);
     }
 
-    public RequestResponseDTO updateRequestById(Long requestId, RequestInputDTO requestInputDTO) {
-        Request updatedRequest = requestService.updateRequestById(requestInputDTO, requestId);
+    public RequestResponseDTO updateRequestById(Long requestId, RequestInputDTO requestInputDTO, Long employeeId) {
+        Request updatedRequest = requestService.updateNewRequest(requestId, requestInputDTO, employeeId);
         return mapToRequestResponseDTO(updatedRequest);
     }
 
@@ -38,19 +38,14 @@ public class RequestFacade {
         requestService.deleteRequest(requestId);
     }
 
-    public RequestResponseDTO changeRequestStatus(Long requestId, RequestStatus newStatus) {
-        Request request = requestService.changeRequestStatus(requestId, newStatus);
+    public RequestResponseDTO changeRequestStatus(Long requestId, RequestStatus newStatus, String comment) {
+        Request request = requestService.changeRequestStatus(requestId, newStatus, comment);
         return mapToRequestResponseDTO(request);  // Convert the updated Request entity to a DTO
     }
 
     public Page<RequestResponseDTO> getRequests(RequestRequestDTO requestRequestDTO) {
         return requestService.getRequests(requestRequestDTO).map(RequestMapper::mapToRequestResponseDTO);
     }
-
-
-
-
-
 
 
 }
