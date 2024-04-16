@@ -7,6 +7,7 @@ import com.example.tma_warehouse.models.item.dtos.ItemRequestDTO;
 import com.example.tma_warehouse.models.item.enums.ItemGroup;
 import com.example.tma_warehouse.models.item.enums.UnitOfMeasurement;
 import com.example.tma_warehouse.repositories.ItemRepository;
+import com.example.tma_warehouse.repositories.RowRequestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,12 +16,14 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ItemService {
 
     private final ItemRepository itemRepository;
+    private final RowRequestRepository rowRequestRepository;
 
     public Item getItemById(Long itemId) {
         Item item = itemRepository.findById(itemId)
