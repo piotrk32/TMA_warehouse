@@ -3,10 +3,10 @@ package com.example.tma_warehouse.controllers.employee;
 import com.example.tma_warehouse.exceptions.ErrorMessage;
 import com.example.tma_warehouse.models.RowRequest.dtos.RowRequestInputDTO;
 import com.example.tma_warehouse.models.RowRequest.dtos.RowRequestResponseDTO;
-import com.example.tma_warehouse.models.request.Request;
 import com.example.tma_warehouse.models.request.dtos.RequestInputDTO;
 import com.example.tma_warehouse.models.request.dtos.RequestResponseDTO;
 import com.example.tma_warehouse.models.user.User;
+import com.example.tma_warehouse.security.services.FineGrainServices;
 import com.example.tma_warehouse.services.request.RequestFacade;
 import com.example.tma_warehouse.services.rowrequest.RowRequestFacade;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,7 +19,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -30,6 +29,7 @@ public class EmployeeRequestController {
 
     private final RequestFacade requestFacade;
     private final RowRequestFacade rowRequestFacade;
+    private final FineGrainServices fineGrainServices;
 
     @Operation(summary = "Create new request", description = "Creates a new request from the provided payload")
     @ApiResponses(value = {
@@ -88,18 +88,11 @@ public class EmployeeRequestController {
             @RequestBody RequestInputDTO requestInputDTO,
             Authentication authentication) {
 
-        Long employeeId = getEmployeeIdFromAuthentication(authentication);
+        Long employeeId = fineGrainServices.getEmployeeIdFromAuthenticationForUpdate(authentication);
         RequestResponseDTO response = requestFacade.updateRequestById(requestId, requestInputDTO, employeeId);
         return ResponseEntity.ok(response);
     }
-    private Long getEmployeeIdFromAuthentication(Authentication authentication) {
-        if (authentication != null && authentication.getPrincipal() instanceof User) {
-            User user = (User) authentication.getPrincipal();
-            return user.getId(); // Pobierz ID użytkownika z klasy User
-        } else {
-            throw new IllegalStateException("Szczegóły użytkownika nie są dostępne w obiekcie Authentication.");
-        }
-    }
+
 
     @Operation(summary = "Add item to existing request", description = "Adds an item to an existing request based on the provided payload")
     @ApiResponses(value = {

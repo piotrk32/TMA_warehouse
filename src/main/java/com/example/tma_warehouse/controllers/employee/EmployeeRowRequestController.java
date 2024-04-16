@@ -6,6 +6,7 @@ import com.example.tma_warehouse.models.RowRequest.dtos.RowRequestInputDTO;
 import com.example.tma_warehouse.models.RowRequest.dtos.RowRequestResponseDTO;
 import com.example.tma_warehouse.models.request.dtos.RequestResponseDTO;
 import com.example.tma_warehouse.models.user.User;
+import com.example.tma_warehouse.security.services.FineGrainServices;
 import com.example.tma_warehouse.services.rowrequest.RowRequestFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 public class EmployeeRowRequestController {
 
     private final RowRequestFacade rowRequestFacade;
+    private final FineGrainServices fineGrainServices;
 
     @Operation(summary = "Get a row by ID", description = "Retrieves a row request details by its ID.")
     @ApiResponses(value = {
@@ -106,18 +108,11 @@ public class EmployeeRowRequestController {
             @RequestBody RowRequestInputDTO inputDTO,
             Authentication authentication) {
 
-        // Assuming you have a way to extract the employee ID from the authentication object
-        Long employeeId = getEmployeeIdFromAuthentication(authentication);
+        Long employeeId = fineGrainServices.getEmployeeIdFromAuthentication(authentication);
         RowRequestResponseDTO updatedRowRequest = rowRequestFacade.updateRowRequestById(rowRequestId, inputDTO, employeeId);
 
         return ResponseEntity.ok(updatedRowRequest);
     }
-    // Helper method to extract the employee's ID from the authentication object
-    private Long getEmployeeIdFromAuthentication(Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
-        return user.getId();
-    }
-
 
 
 }
