@@ -7,6 +7,7 @@ import com.example.tma_warehouse.models.request.dtos.RequestResponseDTO;
 import com.example.tma_warehouse.models.request.enums.RequestStatus;
 import com.example.tma_warehouse.services.request.RequestFacade;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -52,9 +53,18 @@ public class CoordinatorRequestController {
                     ))
     })
     @PatchMapping("/{requestId}/status")
-    public ResponseEntity<RequestResponseDTO> changeRequestStatus(@PathVariable Long requestId,
-                                                                  @RequestParam RequestStatus newStatus) {
-        RequestResponseDTO response = requestFacade.changeRequestStatus(requestId, newStatus);
+    public ResponseEntity<RequestResponseDTO> changeRequestStatus(
+            @Parameter(description = "ID of the request to change status", required = true)
+            @PathVariable Long requestId,
+
+            @Parameter(description = "New status to set for the request", required = true)
+            @RequestParam RequestStatus newStatus,
+
+            @Parameter(description = "Comment to include if the request is rejected, required only if the status is REJECTED")
+            @RequestParam(required = false) String comment) { // Optional comment parameter
+
+        // Pass both newStatus and comment to the facade method
+        RequestResponseDTO response = requestFacade.changeRequestStatus(requestId, newStatus, comment);
         return ResponseEntity.ok(response);
     }
 
