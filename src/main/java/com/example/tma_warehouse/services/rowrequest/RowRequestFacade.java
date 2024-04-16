@@ -47,4 +47,13 @@ public class RowRequestFacade {
         return rowRequests.map(RowRequestMapper::mapToRowRequestResponseDTO);
     }
 
+    public void removeItemFromRequest(Long requestId, Long rowRequestId) {
+        rowRequestService.removeItemFromRequest(requestId, rowRequestId);
+    }
+
+    public RowRequestResponseDTO updateRowRequestById(Long rowRequestId, RowRequestInputDTO inputDTO, Long employeeId) {
+        RowRequest updatedRowRequest = rowRequestService.updateRowRequestById(rowRequestId, inputDTO, employeeId);
+        return mapToRowRequestResponseDTO(updatedRowRequest);
+    }
+
 }
