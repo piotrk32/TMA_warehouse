@@ -3,8 +3,10 @@ package com.example.tma_warehouse.controllers.employee;
 import com.example.tma_warehouse.exceptions.ErrorMessage;
 import com.example.tma_warehouse.models.RowRequest.dtos.RowRequestInputDTO;
 import com.example.tma_warehouse.models.RowRequest.dtos.RowRequestResponseDTO;
+import com.example.tma_warehouse.models.request.Request;
 import com.example.tma_warehouse.models.request.dtos.RequestInputDTO;
 import com.example.tma_warehouse.models.request.dtos.RequestResponseDTO;
+import com.example.tma_warehouse.models.user.User;
 import com.example.tma_warehouse.services.request.RequestFacade;
 import com.example.tma_warehouse.services.rowrequest.RowRequestFacade;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +18,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -79,10 +83,22 @@ public class EmployeeRequestController {
                     ))
     })
     @PutMapping("/{requestId}")
-    public ResponseEntity<RequestResponseDTO> updateRequest(@PathVariable Long requestId,
-                                                            @RequestBody RequestInputDTO requestInputDTO) {
-        RequestResponseDTO updatedRequest = requestFacade.updateRequestById(requestId, requestInputDTO);
-        return ResponseEntity.ok(updatedRequest);
+    public ResponseEntity<RequestResponseDTO> updateRequestById(
+            @PathVariable Long requestId,
+            @RequestBody RequestInputDTO requestInputDTO,
+            Authentication authentication) {
+
+        Long employeeId = getEmployeeIdFromAuthentication(authentication);
+        RequestResponseDTO response = requestFacade.updateRequestById(requestId, requestInputDTO, employeeId);
+        return ResponseEntity.ok(response);
+    }
+    private Long getEmployeeIdFromAuthentication(Authentication authentication) {
+        if (authentication != null && authentication.getPrincipal() instanceof User) {
+            User user = (User) authentication.getPrincipal();
+            return user.getId(); // Pobierz ID użytkownika z klasy User
+        } else {
+            throw new IllegalStateException("Szczegóły użytkownika nie są dostępne w obiekcie Authentication.");
+        }
     }
 
     @Operation(summary = "Add item to existing request", description = "Adds an item to an existing request based on the provided payload")
@@ -112,7 +128,11 @@ public class EmployeeRequestController {
             @Valid @RequestBody RowRequestInputDTO rowRequestInputDTO) {
 
         RowRequestResponseDTO rowRequestResponseDTO = rowRequestFacade.addItemToRequest(requestId, rowRequestInputDTO);
-        com.example.tma_warehouse.utils.ApiResponse<RowRequestResponseDTO> response = new com.example.tma_warehouse.utils.ApiResponse<>(rowRequestResponseDTO, "Item added to request");
+
+        String message = "Request updated!";
+        com.example.tma_warehouse.utils.ApiResponse<RowRequestResponseDTO> response =
+                new com.example.tma_warehouse.utils.ApiResponse<>(rowRequestResponseDTO, message);
+
         return ResponseEntity.ok(response);
     }
 
