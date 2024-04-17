@@ -117,6 +117,31 @@ User Interface :
 
 Implementation the user interface requires some time, unfortunately mine has been limited in recent days but it is possible for me :)
 
+Credential Storage
+
+The practice of storing credentials within the application repository is a security risk.
+
+# Installation and Startup Guide
+
+Prerequisites
+
+• Java Development Kit (JDK) 11 or later installed
+
+• PostgreSQL Database Server 
+
+• Gradle or Maven (depending on the project's build system).
+
+Step 1: Clone the Repository
+
+Step 2: Configure Database
+
+Step 3: Set Environment Variables at yml file
+
+Step 4: Update Application Properties
+
+Step 5: Build the Application
+
+Step 6: Run the Application
 
 
 
