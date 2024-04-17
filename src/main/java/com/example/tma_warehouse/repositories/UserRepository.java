@@ -1,5 +1,6 @@
 package com.example.tma_warehouse.repositories;
 
+import com.example.tma_warehouse.models.employee.Employee;
 import com.example.tma_warehouse.models.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -8,6 +9,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
+
+    User findByEmail(String email);
 
 
     @Query("""

@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
@@ -42,6 +43,11 @@ public class User extends BasicEntity implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     Status status;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role")
+    private List<String> roles = new ArrayList<>();
 
     public User(String email,
                 String accessToken,
@@ -84,12 +90,21 @@ public class User extends BasicEntity implements UserDetails {
             authorities.add(new SimpleGrantedAuthority("ROLE_EMPLOYEE"));
         } else if (this instanceof Coordinator) {
             authorities.add(new SimpleGrantedAuthority("ROLE_COORDINATOR"));
-        }
-        else if (this instanceof Administrator) {  // Check if the user is an Administrator
+        } else if (this instanceof Administrator) {  // Check if the user is an Administrator
             authorities.add(new SimpleGrantedAuthority("ROLE_ADMINISTRATOR"));
         }
+
+        // Add roles for incomplete registration
         if (this.status.equals(Status.REGISTRATION_INCOMPLETE)) {
             authorities.add(new SimpleGrantedAuthority("ROLE_INCOMPLETE_REGISTRATION"));
+        }
+
+        // Add dynamically managed roles
+        if (this.roles != null) {
+            this.roles.stream()
+                    .map(role -> "ROLE_" + role.toUpperCase()) // Ensure roles are in the correct format
+                    .map(SimpleGrantedAuthority::new)
+                    .forEach(authorities::add);
         }
 
         return authorities;

@@ -37,10 +37,11 @@ public class SecurityConfig {
                 .addFilterBefore(payloadAuthenticationFilter, BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(
                         (authorize) -> authorize
-                                .requestMatchers("/coordinator/**").hasRole("COORDINATOR")
-                                .requestMatchers("/employee/**").hasRole("EMPLOYEE")
-                                .requestMatchers("/common/**").hasAnyRole("EMPLOYEE", "COORDINATOR")
-                                .requestMatchers("/register/**").hasRole("INCOMPLETE_REGISTRATION")
+                                .requestMatchers("/coordinator/**").hasAnyRole("COORDINATOR","ADMINISTRATOR")
+                                .requestMatchers("/employee/**").hasAnyRole("EMPLOYEE", "ADMINISTRATOR")
+                                .requestMatchers("/common/**").hasAnyRole("EMPLOYEE", "COORDINATOR", "ADMINISTRATOR")
+                                .requestMatchers("/administrator/**").hasAnyRole("ADMINISTRATOR")
+                                .requestMatchers("/register/**").hasAnyRole("INCOMPLETE_REGISTRATION")
                                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-ui/index.html", "/login/oauth2/code/google").permitAll()
                                 .anyRequest().authenticated()
                 )

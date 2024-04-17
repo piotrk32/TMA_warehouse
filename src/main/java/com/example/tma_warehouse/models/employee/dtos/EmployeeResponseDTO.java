@@ -5,6 +5,7 @@ import com.example.tma_warehouse.models.user.enums.Status;
 import lombok.Builder;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public record EmployeeResponseDTO(Long employeeId,
                                   Status status,
@@ -12,9 +13,9 @@ public record EmployeeResponseDTO(Long employeeId,
                                   String lastName,
                                   LocalDate birthDate,
                                   String email,
-                                  String phoneNumber) {
+                                  String phoneNumber,
+                                  List<String> roles) {  // Add roles to DTO
 
     @Builder
     public EmployeeResponseDTO {}
-
 }

@@ -5,12 +5,16 @@ import com.example.tma_warehouse.exceptions.EntityNotFoundException;
 
 import com.example.tma_warehouse.models.coordinator.Coordinator;
 import com.example.tma_warehouse.models.coordinator.dtos.CoordinatorInputDTO;
+import com.example.tma_warehouse.models.employee.Employee;
+import com.example.tma_warehouse.models.employee.dtos.EmployeeInputDTO;
 import com.example.tma_warehouse.models.user.User;
 import com.example.tma_warehouse.models.user.enums.Status;
 import com.example.tma_warehouse.repositories.CoordinatorRepository;
 import com.example.tma_warehouse.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +38,7 @@ public class CoordinatorService {
                 user.getAccessToken(),
                 user.getRefreshToken(),
                 user.getIdToken());
+        coordinator.setRoles(Arrays.asList("ROLE_EMPLOYEE"));
         userRepository.delete(user);
         return coordinatorRepository.saveAndFlush(coordinator);
     }

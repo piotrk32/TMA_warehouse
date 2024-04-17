@@ -18,6 +18,7 @@ import org.springdoc.api.ErrorMessage;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -138,6 +139,7 @@ public class CoordinatorItemController {
                             mediaType = "application/json"
                     ))
     })
+    @PreAuthorize("hasRole('COORDINATOR')")
     public ResponseEntity<Page<ItemResponseDTO>> getItems(
             @ModelAttribute @Valid ItemRequestDTO itemRequestDTO) {
         Page<ItemResponseDTO> itemResponseDTOPage = itemFacade.getItems(itemRequestDTO);

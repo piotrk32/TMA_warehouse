@@ -11,6 +11,7 @@ import com.example.tma_warehouse.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 @Service
@@ -39,6 +40,7 @@ public class EmployeeService {
                 user.getAccessToken(),
                 user.getRefreshToken(),
                 user.getIdToken());
+        employee.setRoles(Arrays.asList("ROLE_EMPLOYEE"));
         userRepository.delete(user);
         return employeeRepository.saveAndFlush(employee);
     }

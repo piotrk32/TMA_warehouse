@@ -5,7 +5,12 @@ import com.example.tma_warehouse.exceptions.UserAlreadyExistsException;
 
 import com.example.tma_warehouse.models.coordinator.Coordinator;
 import com.example.tma_warehouse.models.coordinator.dtos.CoordinatorInputDTO;
+import com.example.tma_warehouse.models.coordinator.dtos.CoordinatorMapper;
 import com.example.tma_warehouse.models.coordinator.dtos.CoordinatorResponseDTO;
+import com.example.tma_warehouse.models.employee.Employee;
+import com.example.tma_warehouse.models.employee.dtos.EmployeeInputDTO;
+import com.example.tma_warehouse.models.employee.dtos.EmployeeMapper;
+import com.example.tma_warehouse.models.employee.dtos.EmployeeResponseDTO;
 import com.example.tma_warehouse.models.user.User;
 import com.example.tma_warehouse.models.user.enums.Status;
 
@@ -13,6 +18,8 @@ import com.example.tma_warehouse.services.employee.EmployeeService;
 import com.example.tma_warehouse.services.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
 
 import static com.example.tma_warehouse.models.coordinator.dtos.CoordinatorMapper.mapToCoordinatorResponseDTO;
 
@@ -29,13 +36,12 @@ public class CoordinatorFacade {
 
     public CoordinatorResponseDTO createCoordinator(CoordinatorInputDTO coordinatorInputDTO, String email) {
         User user = userService.getUserByEmail(email);
-        if (user.getStatus() == Status.REGISTRATION_INCOMPLETE) {
-
+        if (user.getStatus() == Status.REGISTRATION_INCOMPLETE || user.getRoles().isEmpty()) {
             Coordinator coordinator = coordinatorService.createCoordinator(coordinatorInputDTO, user);
-
-            return mapToCoordinatorResponseDTO(coordinator);
+            userService.createUserWithRole(coordinator, Arrays.asList("ROLE_COORDINATOR"));
+            return CoordinatorMapper.mapToCoordinatorResponseDTO(coordinator);
         }
-        throw new UserAlreadyExistsException("email", "User with this email already exists.");
+        throw new UserAlreadyExistsException("User", "User already registered.");
     }
 
     public void deleteCoordinatorById(Long coordinatorId) {

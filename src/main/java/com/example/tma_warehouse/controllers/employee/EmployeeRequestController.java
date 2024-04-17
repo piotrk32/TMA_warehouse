@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,6 +54,7 @@ public class EmployeeRequestController {
                     ))
     })
     @PostMapping("")
+    @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<com.example.tma_warehouse.utils.ApiResponse<RequestResponseDTO>> createRequest(@RequestBody RequestInputDTO requestInputDTO) {
         RequestResponseDTO requestResponseDTO = requestFacade.createRequest(requestInputDTO);
         com.example.tma_warehouse.utils.ApiResponse<RequestResponseDTO> response = new com.example.tma_warehouse.utils.ApiResponse<>(requestResponseDTO, "Request created");

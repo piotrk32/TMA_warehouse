@@ -16,13 +16,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-//@Entity
-//@Table(name = "administrators")
-//@Getter
-//@Setter
-//@NoArgsConstructor
-//@FieldDefaults(level = AccessLevel.PRIVATE)
-
+@Entity
+@Table(name = "administrators")
+@Getter
+@Setter
+@NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Administrator extends User {
 
     public Administrator(
@@ -37,12 +36,5 @@ public class Administrator extends User {
         super(firstName, lastName, birthDate, email, phoneNumber, accessToken, refreshToken, idToken);
     }
 
-//    @Override
-//    public Collection<? extends GrantedAuthority> getAuthorities() {
-//        List<GrantedAuthority> authorities = new ArrayList<>(super.getAuthorities());
-//        // Dodanie dodatkowych uprawnień dla administratora
-//        authorities.add(new SimpleGrantedAuthority("ROLE_ADMINISTRATOR"));
-//        // Możesz dodać więcej uprawnień specyficznych dla roli Administratora
-//        return authorities;
-//    }
+
 }

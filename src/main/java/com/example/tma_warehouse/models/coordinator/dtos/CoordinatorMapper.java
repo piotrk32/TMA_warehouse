@@ -14,6 +14,7 @@ public class CoordinatorMapper {
                 .birthDate(coordinator.getBirthDate())
                 .email(coordinator.getEmail())
                 .phoneNumber(coordinator.getPhoneNumber())
+                .roles(coordinator.getRoles())
                 .build();
     }
 

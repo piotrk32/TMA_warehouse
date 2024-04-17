@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
@@ -27,6 +28,8 @@ import static com.example.tma_warehouse.security.utils.JwtUtils.extractPayload;
 public class AuthenticationService {
 
     private final UserService userService;
+
+
 
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String clientId;
@@ -78,6 +81,7 @@ public class AuthenticationService {
         return createCookie(PAYLOAD_COOKIE_NAME, extractPayload(tokens.getIdToken()),
                 COOKIE_MAX_AGE_1_DAY, COOKIE_DEFAULT_PATH);
     }
+
 
     public void revoke(String email) {
         String accessToken = userService.getAccessTokenByEmail(email);

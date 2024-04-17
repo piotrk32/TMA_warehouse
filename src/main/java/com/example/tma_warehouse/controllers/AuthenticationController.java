@@ -1,5 +1,8 @@
 package com.example.tma_warehouse.controllers;
 
+import com.example.tma_warehouse.models.administrator.dtos.AdministratorInputDTO;
+import com.example.tma_warehouse.models.administrator.dtos.AdministratorResponseDTO;
+import com.example.tma_warehouse.models.employee.Employee;
 import com.example.tma_warehouse.models.employee.dtos.EmployeeInputDTO;
 import com.example.tma_warehouse.models.employee.dtos.EmployeeResponseDTO;
 import com.example.tma_warehouse.models.coordinator.dtos.CoordinatorInputDTO;
@@ -7,9 +10,11 @@ import com.example.tma_warehouse.models.coordinator.dtos.CoordinatorResponseDTO;
 import com.example.tma_warehouse.models.user.dtos.UserRoleDTO;
 import com.example.tma_warehouse.security.services.AuthenticationService;
 import com.example.tma_warehouse.security.services.FineGrainServices;
+import com.example.tma_warehouse.services.administrator.AdministratorFacade;
 import com.example.tma_warehouse.services.employee.EmployeeFacade;
 import com.example.tma_warehouse.services.coordinator.CoordinatorFacade;
 import com.example.tma_warehouse.services.user.UserFacade;
+import com.example.tma_warehouse.services.user.UserService;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,6 +54,8 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
     private final FineGrainServices fineGrainServices;
     private final UserFacade userFacade;
+    private final AdministratorFacade administratorFacade;
+    private final UserService userService;
 
     public final static String LOGIN_FRONTEND_REDIRECT = "http://localhost:5173";
     public final static String LOGIN_PATH = "/login/oauth2/code/google";
@@ -140,8 +147,8 @@ public class AuthenticationController {
     @PostMapping("/register/employee")
     public ResponseEntity<EmployeeResponseDTO> registerEmployee(@RequestBody @Valid EmployeeInputDTO employeeInputDTO) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        EmployeeResponseDTO employeeResponseDTO = employeeFacade.createEmployee(employeeInputDTO, email);
-        return new ResponseEntity<>(employeeResponseDTO, HttpStatus.CREATED);
+        EmployeeResponseDTO employee = employeeFacade.createEmployee(employeeInputDTO, email);
+        return new ResponseEntity<>(employee, HttpStatus.CREATED);
     }
 
     @Operation(summary = "Create coordinator", description = "Creates a coordinator from the provided payload")
@@ -166,6 +173,33 @@ public class AuthenticationController {
         CoordinatorResponseDTO coordinatorResponseDTO = coordinatorFacade.createCoordinator(coordinatorInputDTO, email);
         return new ResponseEntity<>(coordinatorResponseDTO, HttpStatus.CREATED);
     }
+
+
+    @Operation(summary = "Create administrator", description = "Creates a administrator from the provided payload")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Successful creation of administrator",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = CoordinatorResponseDTO.class)
+                    )),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Bad Request - temporally returns map of errors or ErrorMessage",
+                    content = @Content(
+                            mediaType = "application/json"
+                    ))
+    })
+    @PostMapping("/register/administrator")
+    public ResponseEntity<AdministratorResponseDTO> registerAdministrator(@RequestBody @Valid AdministratorInputDTO administratorInputDTO) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        AdministratorResponseDTO administratorResponseDTO = administratorFacade.createAdministrator(administratorInputDTO, email);
+        return new ResponseEntity<>(administratorResponseDTO, HttpStatus.CREATED);
+    }
+
+
+
 
     @Operation(summary = "Get user info", description = "Retrieves user id and role")
     @ApiResponses(value = {

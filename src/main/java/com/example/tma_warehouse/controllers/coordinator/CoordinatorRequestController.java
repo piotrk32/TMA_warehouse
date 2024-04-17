@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -88,6 +89,7 @@ public class CoordinatorRequestController {
                             mediaType = "application/json"
                     ))
     })
+    @PreAuthorize("hasRole('ROLE_COORDINATOR')")
     public ResponseEntity<Page<RequestResponseDTO>> getRequests(
             @ModelAttribute @Valid RequestRequestDTO requestRequestDTO) {
         Page<RequestResponseDTO> requestResponseDTOPage = requestFacade.getRequests(requestRequestDTO);
