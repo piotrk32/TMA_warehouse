@@ -1,10 +1,4 @@
 
-
-
-
-
-
-
 # Technologies
 Java
 Spring Boot
@@ -20,29 +14,22 @@ InteliiJ IDEA
 Dbeaver
 Swagger
 
-
-
-
-
-
 # Features
 
-## User Authentication and Management:
+### User Authentication and Management:
 User registration and management are core features, with distinct roles for employees, coordinators, and administrators, indicating a role-based access control system.
 OAuth2 integration with Google suggests a secure and convenient sign-in method for users.
-## Item Management:
+### Item Management:
 The system allows for the creation, updating, and deletion of items, which are probably the goods stored in the warehouse.
 Items can be viewed collectively or individually, suggesting a well-organized inventory system.
-## Request Handling:
+### Request Handling:
 Employees can create and manage requests, possibly for stock retrieval or supply needs.
 Coordinators have the ability to manage and respond to these requests, possibly indicating a tiered structure where coordinators oversee and fulfill employee requests.
-## Row Management:
+### Row Management:
 Both employees and coordinators can manage “rows”, which might refer to rows of inventory or storage locations within the warehouse.
 There are functionalities to retrieve, update, and delete row information, which is essential for accurate inventory placement and tracking.
-## Role Management:
+### Role Management:
 Administrators can assign roles, allowing for dynamic access control depending on the changing responsibilities of the staff.
-
-
 
 # Endpoints
 Common Row Controller: Manages general row operations.
@@ -89,5 +76,12 @@ PATCH /coordinator/requests/{requestId}/status: Changes the status of a request.
 GET /coordinator/requests/all: Shows all requests.
 
 # Database
+### Database schema: 
 
+![Alt Text](docs/db_schema.png)
 
+# Database scripts
+
+### Database manage scripts location path:
+
+### src/main/resources/db/migration
