@@ -101,7 +101,7 @@ GET /coordinator/requests/all: Shows all requests.
 # Summary
 
 The application is in an operational state, providing a suite of functionalities to manage items, requests, and user roles. It is structured to cater to different user types, including employees, coordinators, and administrators, each with tailored access and control permissions.
-Role of administrator is also a topic for discussion for example how to administrator
+
 
 ### Areas for Improvement:
 
