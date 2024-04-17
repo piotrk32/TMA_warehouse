@@ -15,7 +15,6 @@ public class RequestSpecification {
             if (employeeName == null || employeeName.isBlank()) {
                 return criteriaBuilder.conjunction(); // No condition
             }
-            // Assuming 'employee' is the name of the attribute in Request entity that maps to Employee entity
             Expression<String> fullName = criteriaBuilder.concat(root.join("employee").get("firstName"),
                     criteriaBuilder.concat(" ", root.join("employee").get("lastName")));
 
@@ -60,7 +59,7 @@ public class RequestSpecification {
                 LocalDateTime toDateTime = LocalDateTime.parse(toDate, formatter);
                 return criteriaBuilder.between(root.get("createdAt"), fromDateTime, toDateTime);
             }
-            return criteriaBuilder.conjunction(); // No condition, effectively ignoring this filter
+            return criteriaBuilder.conjunction();
         };
     }
 }

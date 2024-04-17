@@ -1,7 +1,7 @@
 package com.example.tma_warehouse.security.filters;
+
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
-
 import com.example.tma_warehouse.exceptions.UnauthorizedException;
 import com.example.tma_warehouse.repositories.UserRepository;
 import com.example.tma_warehouse.security.services.AuthenticationService;
@@ -11,7 +11,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,7 +25,6 @@ import java.io.IOException;
 import static com.example.tma_warehouse.controllers.AuthenticationController.LOGIN_PATH;
 import static com.example.tma_warehouse.security.utils.CookieUtils.PAYLOAD_COOKIE_NAME;
 import static com.example.tma_warehouse.security.utils.CookieUtils.extractCookieFromCookies;
-
 import static com.example.tma_warehouse.security.utils.JwtUtils.extractEmailFromPayload;
 import static com.example.tma_warehouse.security.utils.JwtUtils.isTokenExpired;
 
@@ -69,21 +67,15 @@ public class PayloadAuthenticationFilter extends OncePerRequestFilter {
         String encodedIdToken = userRepository.findIdTokenByEmail(email);
         ensureUserIsLoggedIn(encodedIdToken);
 
-        // Decode the JWT to check for expiration and validate the payload
         DecodedJWT idTokenFromDb = JWT.decode(encodedIdToken);
 
-        // Check if the token is expired and renew it if necessary
         if (isTokenExpired(idTokenFromDb)) {
-            // Renew the session and replace the old cookie with a new one
             Cookie newPayloadCookie = renewSession(response, email);
-            payloadFromCookie = newPayloadCookie.getValue(); // Update the local variable to reflect the new token
-            idTokenFromDb = JWT.decode(userRepository.findIdTokenByEmail(email)); // Decode the new token
+            payloadFromCookie = newPayloadCookie.getValue();
+            idTokenFromDb = JWT.decode(userRepository.findIdTokenByEmail(email));
         }
 
-        // Verify that the payload in the user's cookie matches the payload in the database
-        // This is critical to prevent token tampering
         if (!idTokenFromDb.getPayload().equals(payloadFromCookie)) {
-            // If the payloads do not match, revoke the tokens and log out the user
             authenticationService.revoke(email);
             throw new UnauthorizedException("Id Token", "User has been logged out for security reasons. " +
                     "Id Token has been tampered with.");
@@ -97,12 +89,9 @@ public class PayloadAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private Cookie renewSession(HttpServletResponse response, String email) {
-        // Obtain the refresh token from the user repository
         String refreshToken = userRepository.findRefreshTokenByEmail(email);
-        // Request new tokens using the refresh token
         GoogleTokenResponse tokenResponse = authenticationService.renewTokens(refreshToken, email);
 
-        // Set up the new session and create a new cookie with the updated payload
         return authenticationService.setupSession(email, tokenResponse);
     }
 

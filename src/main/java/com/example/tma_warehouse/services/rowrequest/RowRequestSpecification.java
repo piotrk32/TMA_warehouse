@@ -6,9 +6,8 @@ import org.springframework.data.jpa.domain.Specification;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import jakarta.persistence.criteria.*;
+
+;
 
 
 public class RowRequestSpecification {
@@ -26,7 +25,7 @@ public class RowRequestSpecification {
             if (fromDate != null && toDate != null) {
                 return criteriaBuilder.between(root.get("createdAt"), fromDate, toDate);
             }
-            return criteriaBuilder.conjunction(); // No condition
+            return criteriaBuilder.conjunction();
         };
     }
 

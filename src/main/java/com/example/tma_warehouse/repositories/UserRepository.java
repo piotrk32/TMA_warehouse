@@ -1,6 +1,5 @@
 package com.example.tma_warehouse.repositories;
 
-import com.example.tma_warehouse.models.employee.Employee;
 import com.example.tma_warehouse.models.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

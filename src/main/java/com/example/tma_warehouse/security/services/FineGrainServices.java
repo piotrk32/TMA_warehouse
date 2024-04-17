@@ -31,7 +31,6 @@ public class FineGrainServices {
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(role));
     }
 
-    // Helper method to extract the employee's ID from the authentication object
     public Long getEmployeeIdFromAuthentication(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         return user.getId();

@@ -26,10 +26,8 @@ public class RowRequestFacade {
 
 
     public RowRequestResponseDTO addItemToRequest(Long requestId, RowRequestInputDTO rowRequestInputDTO) {
-        // Add the item to the request using the service layer
         RowRequest rowRequest = rowRequestService.addItemToRequest(requestId, rowRequestInputDTO);
 
-        // Map the RowRequest entity to RowRequestResponseDTO
         return mapToRowRequestResponseDTO(rowRequest);
     }
     public Page<RowRequestResponseDTO> getRows(RowRequestDTO rowRequestDTO) {

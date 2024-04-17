@@ -14,7 +14,7 @@ public record EmployeeResponseDTO(Long employeeId,
                                   LocalDate birthDate,
                                   String email,
                                   String phoneNumber,
-                                  List<String> roles) {  // Add roles to DTO
+                                  List<String> roles) {
 
     @Builder
     public EmployeeResponseDTO {}

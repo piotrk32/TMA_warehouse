@@ -23,7 +23,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("User not found with email: " + email);
         }
-        // User class is already a UserDetails because it implements the interface
         return user;
     }
 }

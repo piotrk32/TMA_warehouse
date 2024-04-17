@@ -9,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
 import static com.example.tma_warehouse.models.item.dtos.ItemMapper.mapToItemResponseDTO;
 
 

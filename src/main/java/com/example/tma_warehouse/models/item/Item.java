@@ -49,7 +49,7 @@ public class Item extends BasicEntity {
     private String contactPerson;
 
     @Column(name = "photo")
-    private String photoPath; // może przechowywać ścieżkę do zdjęcia lub UR
+    private String photoPath;
 
     @OneToMany(mappedBy = "item", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<RowRequest> rowRequests;

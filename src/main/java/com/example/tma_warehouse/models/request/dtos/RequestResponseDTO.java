@@ -12,7 +12,6 @@ public record RequestResponseDTO(
         BigDecimal priceWithoutVat,
         String comment,
         String status,
-        //consider later
         String createdAt,
         String modifiedAt
 ) {

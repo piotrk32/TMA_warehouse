@@ -4,7 +4,6 @@ import com.example.tma_warehouse.models.RowRequest.RowRequest;
 import com.example.tma_warehouse.models.basic.BasicEntity;
 import com.example.tma_warehouse.models.employee.Employee;
 import com.example.tma_warehouse.models.item.Item;
-import com.example.tma_warehouse.models.item.enums.UnitOfMeasurement;
 import com.example.tma_warehouse.models.request.enums.RequestStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -39,13 +38,11 @@ public class Request extends BasicEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    RequestStatus status; // Assuming RequestStatus is an Enum representing the status
+    RequestStatus status;
 
     @OneToMany(mappedBy = "request", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RowRequest> rowRequests = new ArrayList<>();
 
-
-    // Constructor, including all fields except 'requestId' which is auto-generated
     public Request(Employee employee, Item item,
                    BigDecimal quantity, BigDecimal priceWithoutVAT, String comment,
                    RequestStatus status) {

@@ -2,11 +2,8 @@ package com.example.tma_warehouse.services.coordinator;
 
 
 import com.example.tma_warehouse.exceptions.EntityNotFoundException;
-
 import com.example.tma_warehouse.models.coordinator.Coordinator;
 import com.example.tma_warehouse.models.coordinator.dtos.CoordinatorInputDTO;
-import com.example.tma_warehouse.models.employee.Employee;
-import com.example.tma_warehouse.models.employee.dtos.EmployeeInputDTO;
 import com.example.tma_warehouse.models.user.User;
 import com.example.tma_warehouse.models.user.enums.Status;
 import com.example.tma_warehouse.repositories.CoordinatorRepository;

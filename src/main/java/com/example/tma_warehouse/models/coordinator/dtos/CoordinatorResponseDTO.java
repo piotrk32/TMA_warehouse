@@ -15,7 +15,6 @@ public record CoordinatorResponseDTO(Long coordinatorId,
                                      String phoneNumber,
                                      List<String>roles){
 
-
     @Builder
     public CoordinatorResponseDTO {}
 

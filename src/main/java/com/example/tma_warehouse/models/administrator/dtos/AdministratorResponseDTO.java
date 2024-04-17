@@ -13,7 +13,6 @@ public record AdministratorResponseDTO(Long coordinatorId,
                                      String email,
                                      String phoneNumber
 ) {
-
     @Builder
     public AdministratorResponseDTO {}
 

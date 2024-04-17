@@ -12,7 +12,7 @@ public record RowRequestInputDTO(
         @NotNull(message = "Quantity cannot be null.")
         @Min(value = 1, message = "Quantity must be greater than zero.")
         BigDecimal quantity,
-        String comment // Optional, no validation needed for optional fields
+        String comment
 ) {
-    // Record in Java comes with a constructor, getters, equals, hashCode, and toString methods out of the box.
+
 }

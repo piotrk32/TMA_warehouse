@@ -11,27 +11,19 @@ import com.example.tma_warehouse.security.services.CustomUserDetailsService;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -120,7 +112,6 @@ public class UserService {
         user.getRoles().clear();
         user.getRoles().addAll(newRoles.stream().map(String::toUpperCase).collect(Collectors.toSet()));
 
-        // Transition user type if necessary
         List<Request> requests =  requestRepository.findAllByEmployeeId(user.getId());
         user = transitionUserTypeBasedOnRoles(user, newRoles);
 
@@ -130,8 +121,8 @@ public class UserService {
         requestRepository.saveAll(requests);
 
 
-        user = userRepository.save(user);  // Make sure the user is saved after changes
-        entityManager.flush();  // Ensure that changes are flushed immediately
+        user = userRepository.save(user);
+        entityManager.flush();
 
         System.out.println("After updating roles: " + user.getRoles());
         return user;
@@ -142,23 +133,21 @@ public class UserService {
         } else if (newRoles.contains("EMPLOYEE") && !(user instanceof Employee)) {
             return transitionToNewUserType(user, Employee.class);
         }
-        // Handle other transitions similarly
+
         return user;
     }
     private <T extends User> T transitionToNewUserType(User oldUser, Class<T> newType) {
-        // Remove the old user from the database
         userRepository.delete(oldUser);
-        entityManager.flush();  // Flush to ensure delete is executed immediately
+        entityManager.flush();
 
-        // Create a new instance of the target type
         T newUser = newType.cast(createNewUserOfType(oldUser, newType));
-        return userRepository.save(newUser);  // Persist the new user type and return it
+        return userRepository.save(newUser);
     }
     private <T extends User> T createNewUserOfType(User user, Class<T> newTypeClass) {
         try {
             T newUser = newTypeClass.getDeclaredConstructor().newInstance();
             BeanUtils.copyProperties(user, newUser, "id", "class");
-            newUser.setId(user.getId());  // Maintain the same ID if your ID strategy allows
+            newUser.setId(user.getId());
             return newUser;
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new RuntimeException("Failed to instantiate user type " + newTypeClass.getSimpleName(), e);
@@ -177,20 +166,20 @@ public class UserService {
         if (roles.contains("ADMINISTRATOR")) return Administrator.class;
         if (roles.contains("COORDINATOR")) return Coordinator.class;
         if (roles.contains("EMPLOYEE")) return Employee.class;
-        return User.class;  // Fallback to base User class
+        return User.class;
     }
 
     private <T extends User> T transitionUserToNewType(User user, Class<T> newTypeClass) {
-        entityManager.remove(user);  // Detach and remove the current instance from persistence context
-        entityManager.flush();  // Flush to execute removal immediately
+        entityManager.remove(user);
+        entityManager.flush();
 
         T newUser;
         try {
             newUser = newTypeClass.getDeclaredConstructor().newInstance();
             BeanUtils.copyProperties(user, newUser, "id");
-            newUser.setId(user.getId());  // Set the same ID to maintain identity
-            entityManager.persist(newUser);  // Persist the new type instance
-            entityManager.flush();  // Ensure it's immediately saved
+            newUser.setId(user.getId());
+            entityManager.persist(newUser);
+            entityManager.flush();
         } catch (Exception e) {
             throw new RuntimeException("Failed to transition user type", e);
         }

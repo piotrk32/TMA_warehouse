@@ -62,9 +62,8 @@ public class CoordinatorRequestController {
             @RequestParam RequestStatus newStatus,
 
             @Parameter(description = "Comment to include if the request is rejected, required only if the status is REJECTED")
-            @RequestParam(required = false) String comment) { // Optional comment parameter
+            @RequestParam(required = false) String comment) {
 
-        // Pass both newStatus and comment to the facade method
         RequestResponseDTO response = requestFacade.changeRequestStatus(requestId, newStatus, comment);
         return ResponseEntity.ok(response);
     }

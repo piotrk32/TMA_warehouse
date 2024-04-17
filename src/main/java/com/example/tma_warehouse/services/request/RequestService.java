@@ -18,7 +18,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -50,78 +49,66 @@ public class RequestService {
 
     @Transactional
     public Request createRequest(RequestInputDTO requestInputDTO) {
-        // Fetch the authenticated user's email and employee entity
+
         String userEmail = fineGrainServices.getUserEmail();
         Employee employee = employeeService.findEmployeeByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("Employee not found for the email: " + userEmail));
 
-        // Create a new Request object with the employee and status set
+
         Request newRequest = new Request();
         newRequest.setEmployee(employee);
-        newRequest.setStatus(RequestStatus.NEW);  // Assuming the new request always starts with NEW status
+        newRequest.setStatus(RequestStatus.NEW);
 
-        // Other request initialization logic can go here, if needed
 
-        // Save the new Request to the database
         return requestRepository.saveAndFlush(newRequest);
     }
 
 
 
-    //TODO NAPRAWIC TO
+
     @Transactional
     public Request updateNewRequest(Long requestId, RequestInputDTO requestInputDTO, Long employeeId) {
         Request existingRequest = requestRepository.findById(requestId)
                 .orElseThrow(() -> new EntityNotFoundException("Request", "Request not found with id: " + requestId));
 
-        // Check if the request's status is NEW
+
         if (existingRequest.getStatus() != RequestStatus.NEW) {
             throw new IllegalStateException("Only requests with status 'NEW' can be updated.");
         }
 
-        // Check if the logged-in employee is the one who created the request
+
         if (!existingRequest.getEmployee().getId().equals(employeeId)) {
             throw new SecurityException("You can only update requests that you have created.");
         }
 
-        // Apply the updates from the RequestUpdateDTO to the existing request
-        // Example: if the comment can be updated
         if (requestInputDTO.comment() != null) {
             existingRequest.setComment(requestInputDTO.comment());
         }
-        // Apply other updates from the DTO...
 
-        // Save and return the updated request
         return requestRepository.save(existingRequest);
     }
 
     @Transactional
     public Request changeRequestStatus(Long requestId, RequestStatus newStatus, String comment) {
-        // Fetch the existing request
         Request request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new EntityNotFoundException("Request", "Request not found with id: " + requestId));
 
-        // Check if the current status is ARCHIVED and block status change if true
         if (request.getStatus() == RequestStatus.ARCHIVED) {
             throw new IllegalStateException("Cannot change the status of an archived request.");
         }
 
-        // Check if the new status is REJECTED and comment is not provided
         if (newStatus == RequestStatus.REJECTED && (comment == null || comment.trim().isEmpty())) {
             throw new IllegalArgumentException("A comment is required when rejecting a request.");
         }
 
-        // Revert item quantities if changing from APPROVED to REJECTED
         if (request.getStatus() == RequestStatus.APPROVED && newStatus == RequestStatus.REJECTED) {
             for (RowRequest row : request.getRowRequests()) {
                 Item item = row.getItem();
-                // Re-add the quantity to the item's stock
                 item.setQuantity(item.getQuantity().add(row.getQuantity()));
                 itemService.saveItem(item);
             }
         }
 
-        // Only update item quantities and calculate costs when the request is set to APPROVED
         if (newStatus == RequestStatus.APPROVED) {
             BigDecimal totalCost = BigDecimal.ZERO;
             for (RowRequest row : request.getRowRequests()) {
@@ -130,27 +117,23 @@ public class RequestService {
                 if (newQuantity.compareTo(BigDecimal.ZERO) < 0) {
                     throw new InsufficientQuantityException("Insufficient stock for item ID " + item.getId());
                 }
-                // Calculate the total cost
-                BigDecimal rowCost = row.getPriceWithoutVat(); // Assuming this is calculated as quantity * price per item when row was created
+                BigDecimal rowCost = row.getPriceWithoutVat();
                 totalCost = totalCost.add(rowCost);
 
-                // Update the item's available quantity to reflect the amount added to the request
+
                 item.setQuantity(newQuantity);
                 itemService.saveItem(item);
             }
-            // Set the total cost to the request
+
             request.setPriceWithoutVAT(totalCost);
         }
 
-        // Update the comment if provided
         if (comment != null && !comment.trim().isEmpty()) {
             request.setComment(comment);
         }
 
-        // Update the status
         request.setStatus(newStatus);
 
-        // Save and return the updated request
         return requestRepository.save(request);
     }
 
@@ -181,7 +164,6 @@ public class RequestService {
             spec = spec.and(RequestSpecification.hasCommentLike(requestRequestDTO.getComment()));
         }
 
-        // Define sorting and pagination
         Pageable pageable = PageRequest.of(
                 Integer.parseInt(requestRequestDTO.getPage()),
                 Integer.parseInt(requestRequestDTO.getSize()),
@@ -192,7 +174,7 @@ public class RequestService {
     }
 
 
-    //MOVE TO ADMINISTRATOR
+
     @PreAuthorize("(#status != 'ARCHIVED') or hasAuthority('ROLE_ADMINISTRATOR')")
     public void deleteRequest(Long requestId) {
         Request request = getRequestById(requestId);

@@ -3,8 +3,8 @@ package com.example.tma_warehouse.models.user;
 
 import com.example.tma_warehouse.models.administrator.Administrator;
 import com.example.tma_warehouse.models.basic.BasicEntity;
-import com.example.tma_warehouse.models.employee.Employee;
 import com.example.tma_warehouse.models.coordinator.Coordinator;
+import com.example.tma_warehouse.models.employee.Employee;
 import com.example.tma_warehouse.models.user.enums.Status;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -20,7 +20,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
@@ -94,12 +93,12 @@ public class User extends BasicEntity implements UserDetails {
             authorities.add(new SimpleGrantedAuthority("ROLE_ADMINISTRATOR"));
         }
 
-        // Add roles for incomplete registration
+
         if (this.status.equals(Status.REGISTRATION_INCOMPLETE)) {
             authorities.add(new SimpleGrantedAuthority("ROLE_INCOMPLETE_REGISTRATION"));
         }
 
-        // Add dynamically managed roles
+
         if (this.roles != null) {
             this.roles.stream()
                     .map(role -> "ROLE_" + role.toUpperCase()) // Ensure roles are in the correct format

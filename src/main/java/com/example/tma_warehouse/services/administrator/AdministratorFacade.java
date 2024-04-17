@@ -4,9 +4,6 @@ import com.example.tma_warehouse.exceptions.UserAlreadyExistsException;
 import com.example.tma_warehouse.models.administrator.Administrator;
 import com.example.tma_warehouse.models.administrator.dtos.AdministratorInputDTO;
 import com.example.tma_warehouse.models.administrator.dtos.AdministratorResponseDTO;
-import com.example.tma_warehouse.models.coordinator.Coordinator;
-import com.example.tma_warehouse.models.coordinator.dtos.CoordinatorInputDTO;
-import com.example.tma_warehouse.models.coordinator.dtos.CoordinatorResponseDTO;
 import com.example.tma_warehouse.models.user.User;
 import com.example.tma_warehouse.models.user.enums.Status;
 import com.example.tma_warehouse.services.user.UserService;
@@ -14,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import static com.example.tma_warehouse.models.administrator.dtos.AdministratorMapper.mapToAdministratorResponseDTO;
-import static com.example.tma_warehouse.models.coordinator.dtos.CoordinatorMapper.mapToCoordinatorResponseDTO;
 
 @Component
 @RequiredArgsConstructor
