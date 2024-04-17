@@ -1,18 +1,30 @@
 
 # Technologies
-Java
-Spring Boot
-Spring Security
-OAUTH2
-Spring Data JPA
-Hibernate ORM 
-Flyway 
-PostgreSQL 
-Spring MVC
-Lombok
-InteliiJ IDEA
-Dbeaver
-Swagger
+· Java
+
+• Spring Boot
+
+• Spring Security
+
+• OAUTH2
+
+• Spring Data JPA
+
+• Hibernate ORM
+
+• Flyway
+
+• PostgreSQL
+
+• Spring MVC
+
+• Lombok
+
+• InteliiJ IDEA
+
+• Dbeaver
+
+• Swagger
 
 # Features
 
@@ -85,3 +97,26 @@ GET /coordinator/requests/all: Shows all requests.
 ### Database manage scripts location path:
 
 ### src/main/resources/db/migration
+
+# Summary
+
+The application is in an operational state, providing a suite of functionalities to manage items, requests, and user roles. It is structured to cater to different user types, including employees, coordinators, and administrators, each with tailored access and control permissions.
+Role of administrator is also a topic for discussion for example how to administrator
+
+### Areas for Improvement:
+
+Authority and Role Management:
+
+The current system for changing user roles, specifically transitioning between employee and coordinator roles, requires further optimization. The process is not as seamless as it could be, which may lead to inconsistencies or a lack of immediate updates in the user's authority level.
+
+Validation Mechanism
+
+More  validation would be advisable.
+
+User Interface :
+
+Implementation the user interface requires some time, unfortunately mine has been limited in recent days but it is possible for me :)
+
+
+
+
