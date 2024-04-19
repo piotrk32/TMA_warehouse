@@ -83,6 +83,7 @@ Administrator Controller: Provides functionalities for administrators.
 
 POST /administrator/{userId}/roles: Assigns roles to a user.
 Coordinator Request Controller: Manages requests by coordinators.
+GET /administrator/users: Get all users
 
 PATCH /coordinator/requests/{requestId}/status: Changes the status of a request.
 GET /coordinator/requests/all: Shows all requests.
