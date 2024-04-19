@@ -79,6 +79,7 @@ public class AdministratorController {
                     @ApiResponse(responseCode = "500", description = "Internal Server Error")
             })
     @GetMapping("/dtos")
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
     public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
         List<UserResponseDTO> userDtos = userFacade.getAllUsers();
         return ResponseEntity.ok(userDtos);
