@@ -6,6 +6,8 @@ import com.example.tma_warehouse.models.coordinator.Coordinator;
 import com.example.tma_warehouse.models.employee.Employee;
 import com.example.tma_warehouse.models.request.Request;
 import com.example.tma_warehouse.models.user.User;
+import com.example.tma_warehouse.models.user.dtos.UserMapper;
+import com.example.tma_warehouse.models.user.dtos.UserResponseDTO;
 import com.example.tma_warehouse.repositories.*;
 import com.example.tma_warehouse.security.services.CustomUserDetailsService;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
@@ -192,5 +194,11 @@ public class UserService {
                 userDetails, null, userDetails.getAuthorities());
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    public List<UserResponseDTO> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(UserMapper::mapToUserReposonseDTO)
+                .collect(Collectors.toList());
     }
 }
