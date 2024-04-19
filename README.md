@@ -101,7 +101,7 @@ GET /coordinator/requests/all: Shows all requests.
 # Summary
 
 The application is in an operational state, providing a suite of functionalities to manage items, requests, and user roles. It is structured to cater to different user types, including employees, coordinators, and administrators, each with tailored access and control permissions.
-Role of administrator is also a topic for discussion for example how to administrator
+
 
 ### Areas for Improvement:
 
@@ -142,6 +142,12 @@ Step 4: Update Application Properties
 Step 5: Build the Application
 
 Step 6: Run the Application
+
+Step 7: Use redirect uri and log in Google
+https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=169491545934-2ci0s9tso6sru6ki52qtabo4422o71gu.apps.googleusercontent.com&redirect_uri=http://localhost:8080/login/oauth2/code/google&scope=openid%20email%20profile&access_type=offline
+
+Step 8: Use Swagger to test application  
+http://localhost:8080/swagger-ui/index.html
 
 
 
