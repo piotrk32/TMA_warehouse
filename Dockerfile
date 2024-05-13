@@ -1,17 +1,25 @@
-# Use an official Java runtime as a parent image
-FROM openjdk:19
+# Start from the official Ubuntu base image
+FROM ubuntu:latest
 
-# Set the working directory in the container
+# Install OpenJDK 17 and findutils
+RUN apt-get update && \
+    apt-get install -y openjdk-17-jdk findutils
+
+# Set the working directory
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
+# Copy application files
 ADD . /app
+
+# Make the gradlew script executable
+RUN chmod +x ./gradlew
+
+# Build the application without running tests and list the output directory
+RUN ./gradlew build -x test && ls -la /app/build/libs/
 
 # Make port 8080 available to the world outside this container
 EXPOSE 8080
 
-# Build the application
-RUN ./gradlew build
-
-# Run the application when the container launches
-CMD ["java", "-jar", "build/libs/TMA_warehouse.jar"]
+# Ensure the JAR file is executable and specify the full path for CMD
+RUN chmod +x /app/build/libs/tma_warehouse-0.0.1-SNAPSHOT.jar
+CMD ["java", "-jar", "/app/build/libs/tma_warehouse-0.0.1-SNAPSHOT.jar"]

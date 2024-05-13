@@ -66,6 +66,8 @@ dependencies {
     implementation 'org.slf4j:slf4j-api'
     runtimeOnly 'ch.qos.logback:logback-classic'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.postgresql:postgresql'
+
 
 }
 
