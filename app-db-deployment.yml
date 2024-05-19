@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-db
+spec:
+  selector:
+    matchLabels:
+      app: app-db
+  template:
+    metadata:
+      labels:
+        app: app-db
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:latest
+          env:
+            - name: POSTGRES_PASSWORD
+              value: "12345"
+            - name: POSTGRES_DB
+              value: "tma_warehouse"
+            - name: POSTGRES_USER
+              value: "postgres"
