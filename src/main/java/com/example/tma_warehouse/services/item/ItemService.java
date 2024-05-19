@@ -102,7 +102,7 @@ public class ItemService {
             spec = spec.and(ItemSpecification.hasStorageLocation(itemRequestDTO.getStorageLocation()));
         }
 
-        if (itemRequestDTO.getItemNameSearch() != null) { // Załóżmy, że dodałeś pole nameSearch do ItemRequestDTO
+        if (itemRequestDTO.getItemNameSearch() != null) {
             spec = spec.and(ItemSpecification.nameContains(itemRequestDTO.getItemNameSearch()));
         }
 

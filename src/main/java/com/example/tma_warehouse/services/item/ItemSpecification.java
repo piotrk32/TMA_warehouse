@@ -37,9 +37,9 @@ public class ItemSpecification {
     public static Specification<Item> hasStatus(String status) {
         return (root, query, criteriaBuilder) -> {
             if (status == null || status.trim().isEmpty()) {
-                return criteriaBuilder.conjunction(); // No filtering condition
+                return criteriaBuilder.conjunction();
             }
-            // Using lower case for both for case-insensitive comparison
+
             return criteriaBuilder.equal(criteriaBuilder.lower(root.get("status")), status.toLowerCase().trim());
         };
     }
@@ -47,7 +47,7 @@ public class ItemSpecification {
     public static Specification<Item> hasStorageLocation(String storageLocation) {
         return (root, query, criteriaBuilder) -> {
             if (storageLocation == null || storageLocation.isBlank()) {
-                return criteriaBuilder.isTrue(criteriaBuilder.literal(true)); // Jeśli lokalizacja magazynowa jest pusta, nie filtrujemy po niej
+                return criteriaBuilder.isTrue(criteriaBuilder.literal(true));
             }
             return criteriaBuilder.like(criteriaBuilder.lower(root.get("storageLocation")), "%" + storageLocation.toLowerCase().trim() + "%");
         };

@@ -40,7 +40,7 @@ public class RequestFacade {
 
     public RequestResponseDTO changeRequestStatus(Long requestId, RequestStatus newStatus, String comment) {
         Request request = requestService.changeRequestStatus(requestId, newStatus, comment);
-        return mapToRequestResponseDTO(request);  // Convert the updated Request entity to a DTO
+        return mapToRequestResponseDTO(request);
     }
 
     public Page<RequestResponseDTO> getRequests(RequestRequestDTO requestRequestDTO) {

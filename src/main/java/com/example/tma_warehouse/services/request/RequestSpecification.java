@@ -13,7 +13,7 @@ public class RequestSpecification {
     public static Specification<Request> hasEmployeeName(String employeeName) {
         return (root, query, criteriaBuilder) -> {
             if (employeeName == null || employeeName.isBlank()) {
-                return criteriaBuilder.conjunction(); // No condition
+                return criteriaBuilder.conjunction();
             }
             Expression<String> fullName = criteriaBuilder.concat(root.join("employee").get("firstName"),
                     criteriaBuilder.concat(" ", root.join("employee").get("lastName")));

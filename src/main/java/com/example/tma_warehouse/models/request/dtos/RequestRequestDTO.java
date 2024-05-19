@@ -34,7 +34,7 @@ public class RequestRequestDTO {
     private String employeeNameSearch = null;
 
     @Schema(example = "2021-10-01")
-    private String fromDate = null; // Assuming filter by the date range
+    private String fromDate = null;
 
     @Schema(example = "2021-12-01")
     private String toDate = null;
@@ -49,10 +49,10 @@ public class RequestRequestDTO {
 
     @Schema(example = "New")
     @Length(min = 3, message = "Status search must be at least 3 characters long.")
-    private String status = null; // Assuming you want to filter by status if applicable
+    private String status = null;
 
     @Schema(example = "Comment here")
     @Length(min = 3, message = "Comment must be at least 3 characters long.")
-    private String comment = null; // Assuming you want to filter by comments in the row request
+    private String comment = null;
 
 }
