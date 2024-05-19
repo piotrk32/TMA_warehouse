@@ -101,7 +101,7 @@ public class UserService {
 
     public User createUserWithRole(User user, List<String> roles) {
         user.setRoles(roles);
-        return userRepository.save(user); // Assuming userRepository handles User entities.
+        return userRepository.save(user);
     }
 
     @Transactional
