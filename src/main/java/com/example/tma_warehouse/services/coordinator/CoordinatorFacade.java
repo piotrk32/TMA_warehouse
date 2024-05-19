@@ -7,7 +7,6 @@ import com.example.tma_warehouse.models.coordinator.dtos.CoordinatorMapper;
 import com.example.tma_warehouse.models.coordinator.dtos.CoordinatorResponseDTO;
 import com.example.tma_warehouse.models.user.User;
 import com.example.tma_warehouse.models.user.enums.Status;
-import com.example.tma_warehouse.services.employee.EmployeeService;
 import com.example.tma_warehouse.services.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -22,9 +21,7 @@ import static com.example.tma_warehouse.models.coordinator.dtos.CoordinatorMappe
 public class CoordinatorFacade {
 
     private final UserService userService;
-
     private final CoordinatorService coordinatorService;
-    private final EmployeeService employeeService;
 
 
     public CoordinatorResponseDTO createCoordinator(CoordinatorInputDTO coordinatorInputDTO, String email) {
