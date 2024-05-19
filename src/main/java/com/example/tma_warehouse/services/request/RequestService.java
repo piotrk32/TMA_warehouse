@@ -10,12 +10,9 @@ import com.example.tma_warehouse.models.request.dtos.RequestInputDTO;
 import com.example.tma_warehouse.models.request.dtos.RequestRequestDTO;
 import com.example.tma_warehouse.models.request.enums.RequestStatus;
 import com.example.tma_warehouse.repositories.RequestRepository;
-import com.example.tma_warehouse.repositories.RowRequestRepository;
 import com.example.tma_warehouse.security.services.FineGrainServices;
 import com.example.tma_warehouse.services.employee.EmployeeService;
 import com.example.tma_warehouse.services.item.ItemService;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -36,10 +33,7 @@ public class RequestService {
     private final ItemService itemService;
     private final EmployeeService employeeService;
     private final FineGrainServices fineGrainServices;
-    private final RowRequestRepository rowRequestRepository;
 
-    @PersistenceContext
-    private EntityManager entityManager;
 
     public Request getRequestById(Long requestId) {
         Request request = requestRepository.findById(requestId)

@@ -31,9 +31,8 @@ public class RowRequestService {
     private final RowRequestRepository rowRequestRepository;
 
     public RowRequest getRowRequestById(Long rowRequestId) {
-        RowRequest rowRequest = rowRequestRepository.findById(rowRequestId)
+        return rowRequestRepository.findById(rowRequestId)
                 .orElseThrow(() -> new EntityNotFoundException("Request", "No request found with id: " + rowRequestId));
-        return rowRequest;
     }
 
     @Transactional

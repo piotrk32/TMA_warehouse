@@ -5,8 +5,7 @@ import jakarta.persistence.criteria.Expression;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
 
 public class RequestSpecification {
 
@@ -51,15 +50,4 @@ public class RequestSpecification {
         };
     }
 
-        public static Specification<Request> createdBetween(String fromDate, String toDate) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return (root, query, criteriaBuilder) -> {
-            if (fromDate != null && toDate != null) {
-                LocalDateTime fromDateTime = LocalDateTime.parse(fromDate, formatter);
-                LocalDateTime toDateTime = LocalDateTime.parse(toDate, formatter);
-                return criteriaBuilder.between(root.get("createdAt"), fromDateTime, toDateTime);
-            }
-            return criteriaBuilder.conjunction();
-        };
-    }
 }

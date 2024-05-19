@@ -34,10 +34,6 @@ public class RequestFacade {
         return mapToRequestResponseDTO(updatedRequest);
     }
 
-    public void deleteRequestById(Long requestId) {
-        requestService.deleteRequest(requestId);
-    }
-
     public RequestResponseDTO changeRequestStatus(Long requestId, RequestStatus newStatus, String comment) {
         Request request = requestService.changeRequestStatus(requestId, newStatus, comment);
         return mapToRequestResponseDTO(request);

@@ -1,7 +1,6 @@
 package com.example.tma_warehouse.services.user;
 
 import com.example.tma_warehouse.exceptions.EntityNotFoundException;
-import com.example.tma_warehouse.models.administrator.Administrator;
 import com.example.tma_warehouse.models.coordinator.Coordinator;
 import com.example.tma_warehouse.models.employee.Employee;
 import com.example.tma_warehouse.models.request.Request;
@@ -9,18 +8,13 @@ import com.example.tma_warehouse.models.user.User;
 import com.example.tma_warehouse.models.user.dtos.UserMapper;
 import com.example.tma_warehouse.models.user.dtos.UserResponseDTO;
 import com.example.tma_warehouse.repositories.*;
-import com.example.tma_warehouse.security.services.CustomUserDetailsService;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
@@ -33,11 +27,6 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final EmployeeRepository employeeRepository;
-    private final CoordinatorRepository coordinatorRepository;
-    private final AdministratorRepository administratorRepository;
-    private final CustomUserDetailsService customUserDetailsService;
-    private final UserDetailsService userDetailsService;
     private final RequestRepository requestRepository;
 
     @PersistenceContext
@@ -156,45 +145,6 @@ public class UserService {
         }
     }
 
-    private User updateOrTransitionUserType(User user, List<String> newRoles) {
-        Class<? extends User> targetType = determineTargetType(newRoles);
-        if (!targetType.isInstance(user)) {
-            return transitionUserToNewType(user, targetType);
-        }
-        return user;
-    }
-
-    private Class<? extends User> determineTargetType(List<String> roles) {
-        if (roles.contains("ADMINISTRATOR")) return Administrator.class;
-        if (roles.contains("COORDINATOR")) return Coordinator.class;
-        if (roles.contains("EMPLOYEE")) return Employee.class;
-        return User.class;
-    }
-
-    private <T extends User> T transitionUserToNewType(User user, Class<T> newTypeClass) {
-        entityManager.remove(user);
-        entityManager.flush();
-
-        T newUser;
-        try {
-            newUser = newTypeClass.getDeclaredConstructor().newInstance();
-            BeanUtils.copyProperties(user, newUser, "id");
-            newUser.setId(user.getId());
-            entityManager.persist(newUser);
-            entityManager.flush();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to transition user type", e);
-        }
-        return newUser;
-    }
-
-    private void refreshAuthentication(String email) {
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                userDetails, null, userDetails.getAuthorities());
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
 
     public List<UserResponseDTO> getAllUsers() {
         return userRepository.findAll().stream()
