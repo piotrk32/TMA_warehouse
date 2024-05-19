@@ -1,6 +1,7 @@
 version: '3.8'
 services:
   app:
+    image: piotrk322/tma_warehouse:latest
     build:
       dockerfile: Dockerfile
     ports:
