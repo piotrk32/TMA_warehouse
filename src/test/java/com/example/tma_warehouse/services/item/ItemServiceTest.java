@@ -108,4 +108,21 @@ public class ItemServiceTest {
         verify(itemRepository).delete(item);
         verify(itemRepository).findById(1L);
     }
+
+    @Test
+    void updateItemById_updatesAndReturnsItem() {
+
+        ItemInputDTO itemInputDTO = new ItemInputDTO(
+                "Updated Item", "GROUP_B", "kg", new BigDecimal(15), new BigDecimal("149.99"), "AVAILABLE", "A1", "Jane Doe", "/images/updated_item.png");
+
+        when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
+        when(itemRepository.saveAndFlush(any(Item.class))).thenReturn(item);
+
+        Item updatedItem = itemService.updateItemById(1L, itemInputDTO);
+
+        assertEquals("Updated Item", updatedItem.getItemName());
+        assertEquals(new BigDecimal(15), updatedItem.getQuantity());
+        verify(itemRepository).findById(1L);
+        verify(itemRepository).saveAndFlush(any(Item.class));
+    }
 }
