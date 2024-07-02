@@ -1,8 +1,8 @@
 package com.example.tma_warehouse.services.item;
 
+import com.example.tma_warehouse.exceptions.EntityNotFoundException;
 import com.example.tma_warehouse.models.item.Item;
 import com.example.tma_warehouse.repositories.ItemRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,22 +45,18 @@ public class ItemServiceTest {
     }
     @Test
     void getItemById_returnsItem() {
-        // Arrange
+
         when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
 
-        // Act
         Item foundItem = itemService.getItemById(1L);
 
-        // Assert
         assertEquals("Test Item", foundItem.getItemName());
         verify(itemRepository).findById(1L);
     }
     @Test
     void getItemById_throwsExceptionWhenNotFound() {
-        // Arrange
         when(itemRepository.findById(1L)).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(EntityNotFoundException.class, () -> itemService.getItemById(1L));
         verify(itemRepository).findById(1L);
     }
