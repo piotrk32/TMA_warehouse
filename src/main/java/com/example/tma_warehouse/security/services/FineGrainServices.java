@@ -38,9 +38,9 @@ public class FineGrainServices {
     public Long getEmployeeIdFromAuthenticationForUpdate(Authentication authentication) {
         if (authentication != null && authentication.getPrincipal() instanceof User) {
             User user = (User) authentication.getPrincipal();
-            return user.getId(); // Pobierz ID użytkownika z klasy User
+            return user.getId();
         } else {
-            throw new IllegalStateException("Szczegóły użytkownika nie są dostępne w obiekcie Authentication.");
+            throw new IllegalStateException("User's details are not avaliable in Auth object.");
         }
     }
 
