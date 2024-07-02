@@ -2,6 +2,9 @@ package com.example.tma_warehouse.services.item;
 
 import com.example.tma_warehouse.exceptions.EntityNotFoundException;
 import com.example.tma_warehouse.models.item.Item;
+import com.example.tma_warehouse.models.item.dtos.ItemInputDTO;
+import com.example.tma_warehouse.models.item.enums.ItemGroup;
+import com.example.tma_warehouse.models.item.enums.UnitOfMeasurement;
 import com.example.tma_warehouse.repositories.ItemRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -59,5 +63,38 @@ public class ItemServiceTest {
 
         assertThrows(EntityNotFoundException.class, () -> itemService.getItemById(1L));
         verify(itemRepository).findById(1L);
+    }
+
+    @Test
+    void createItem_returnsNewItem() {
+
+        ItemInputDTO itemInputDTO = new ItemInputDTO(
+                "New Item",
+                "GROUP_A",
+                "t",
+                new BigDecimal("10"),
+                new BigDecimal("99.99"),
+                "AVAILABLE",
+                "A1",
+                "John Doe",
+                "/images/item.png");
+
+        Item newItem = new Item(
+                "New Item",
+                ItemGroup.GROUP_A,
+                UnitOfMeasurement.t,
+                new BigDecimal("10"),
+                new BigDecimal("99.99"),
+                "AVAILABLE",
+                "A1",
+                "John Doe",
+                "/images/item.png");
+
+        when(itemRepository.saveAndFlush(any(Item.class))).thenReturn(newItem);
+
+        Item createdItem = itemService.createItem(itemInputDTO);
+
+        assertEquals("New Item", createdItem.getItemName());
+        verify(itemRepository).saveAndFlush(any(Item.class));
     }
 }
