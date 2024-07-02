@@ -97,4 +97,15 @@ public class ItemServiceTest {
         assertEquals("New Item", createdItem.getItemName());
         verify(itemRepository).saveAndFlush(any(Item.class));
     }
+
+    @Test
+    void deleteItemById_deletesItem() {
+        // Arrange
+        when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
+
+        itemService.deleteItemById(1L);
+
+        verify(itemRepository).delete(item);
+        verify(itemRepository).findById(1L);
+    }
 }
