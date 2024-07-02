@@ -67,6 +67,9 @@ dependencies {
     runtimeOnly 'ch.qos.logback:logback-classic'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.postgresql:postgresql'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.mockito:mockito-core:3.12.4'
+
 
 
 }
